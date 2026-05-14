@@ -1,0 +1,138 @@
+top_k: 10
+languages: ["en", "pl", "zh"]
+candidate_root: "data/candidates"
+cache_path: "cache/embeddings_cache_3models.jsonl"
+output_dir: "outputs/three_models"
+search_scope: "category"
+
+# Main strategy for the model comparison. This keeps the comparison focused:
+# the representation strategy is fixed, only the model changes.
+emotion_representation_strategies:
+  - centroid_phrases
+
+neutral_strategies:
+  - neutral_centroid
+
+models:
+  gemini:
+    enabled: true
+    backend: gemini
+    model_id: "models/gemini-embedding-001"
+    embedding_dimension: 3072
+    normalize: true
+
+  qwen3_embedding_8b:
+    enabled: true
+    backend: sentence-transformers
+    model_id: "Qwen/Qwen3-Embedding-8B"
+    embedding_dimension: 4096
+    normalize: true
+
+  bielik_1_5b_v3:
+    enabled: true
+    backend: bielik
+    model_id: "speakleash/Bielik-1.5B-v3.0-Instruct"
+    embedding_dimension: null
+    pooling_strategy: mean
+    normalize: true
+    device: auto
+    torch_dtype: auto
+    max_length: 128
+    trust_remote_code: true
+
+categories:
+  food:
+    en: "food"
+    pl: "jedzenie"
+    zh: "食物"
+  person:
+    en: "person"
+    pl: "osoba"
+    zh: "人"
+  object:
+    en: "object"
+    pl: "przedmiot"
+    zh: "物品"
+  place:
+    en: "place"
+    pl: "miejsce"
+    zh: "地方"
+  situation:
+    en: "situation"
+    pl: "sytuacja"
+    zh: "情况"
+
+# TODO: Tu wklej pelna liste emocji z projektu.
+emotions:
+  sadness:
+    en:
+      single_word: "sadness"
+      feeling_phrase: "feeling sad"
+      centroid_words: ["sadness", "sorrow", "gloom"]
+      centroid_phrases: ["feeling sad", "feeling sorrowful", "feeling gloomy"]
+    pl:
+      single_word: "smutek"
+      feeling_phrase: "czuję smutek"
+      centroid_words: ["smutek", "żal", "przygnębienie"]
+      centroid_phrases: ["czuję smutek", "czuję żal", "czuję przygnębienie"]
+    zh:
+      single_word: "悲伤"
+      feeling_phrase: "感到悲伤"
+      centroid_words: ["悲伤", "难过", "忧郁"]
+      centroid_phrases: ["感到悲伤", "感到难过", "感到忧郁"]
+
+  disgust:
+    en:
+      single_word: "disgust"
+      feeling_phrase: "feeling disgusted"
+      centroid_words: ["disgust", "revulsion", "repulsion"]
+      centroid_phrases: ["feeling disgusted", "feeling revolted", "feeling repulsed"]
+    pl:
+      single_word: "wstręt"
+      feeling_phrase: "czuję wstręt"
+      centroid_words: ["wstręt", "obrzydzenie", "odraza"]
+      centroid_phrases: ["czuję wstręt", "czuję obrzydzenie", "czuję odrazę"]
+    zh:
+      single_word: "厌恶"
+      feeling_phrase: "感到厌恶"
+      centroid_words: ["厌恶", "反感", "恶心"]
+      centroid_phrases: ["感到厌恶", "感到反感", "感到恶心"]
+
+  joy:
+    en:
+      single_word: "joy"
+      feeling_phrase: "feeling joyful"
+      centroid_words: ["joy", "happiness", "delight"]
+      centroid_phrases: ["feeling joyful", "feeling happy", "feeling delighted"]
+    pl:
+      single_word: "radość"
+      feeling_phrase: "czuję radość"
+      centroid_words: ["radość", "szczęście", "zachwyt"]
+      centroid_phrases: ["czuję radość", "czuję szczęście", "czuję zachwyt"]
+    zh:
+      single_word: "快乐"
+      feeling_phrase: "感到快乐"
+      centroid_words: ["快乐", "幸福", "喜悦"]
+      centroid_phrases: ["感到快乐", "感到幸福", "感到喜悦"]
+
+  anger:
+    en:
+      single_word: "anger"
+      feeling_phrase: "feeling angry"
+      centroid_words: ["anger", "rage", "irritation"]
+      centroid_phrases: ["feeling angry", "feeling enraged", "feeling irritated"]
+    pl:
+      single_word: "gniew"
+      feeling_phrase: "czuję gniew"
+      centroid_words: ["gniew", "złość", "irytacja"]
+      centroid_phrases: ["czuję gniew", "czuję złość", "czuję irytację"]
+    zh:
+      single_word: "愤怒"
+      feeling_phrase: "感到愤怒"
+      centroid_words: ["愤怒", "生气", "恼火"]
+      centroid_phrases: ["感到愤怒", "感到生气", "感到恼火"]
+
+neutral_terms:
+  en: ["neutral", "ordinary", "plain", "average"]
+  pl: ["neutralny", "zwykły", "przeciętny", "codzienny"]
+  zh: ["中性", "普通", "一般", "平常"]

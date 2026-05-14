@@ -1,0 +1,12 @@
+friend
+stranger
+teacher
+enemy
+doctor
+child
+happy person
+angry man
+sad woman
+disgusted customer
+lonely person
+kind neighbor

@@ -1,0 +1,10 @@
+chair
+phone
+knife
+toy
+dirty cloth
+broken mirror
+gift
+old book
+rusty tool
+flower vase

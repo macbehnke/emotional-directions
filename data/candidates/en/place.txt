@@ -1,0 +1,10 @@
+home
+park
+hospital
+cemetery
+sunny beach
+music festival
+dirty alley
+beautiful garden
+abandoned building
+kitchen
