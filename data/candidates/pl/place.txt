@@ -1,10 +1,30 @@
 dom
 park
+szkoła
+biuro
 szpital
 cmentarz
+kuchnia
+biblioteka
+dworzec
+lotnisko
+kościół
+muzeum
+restauracja
+plac zabaw
 słoneczna plaża
 festiwal muzyczny
-brudna uliczka
 piękny ogród
+przytulna kawiarnia
+sala weselna
+dom z dzieciństwa
+brudna uliczka
 opuszczony budynek
-kuchnia
+ciemna piwnica
+cela więzienna
+sala ratunkowa
+dom pogrzebowy
+zatłoczony przystanek
+zanieczyszczona rzeka
+niebezpieczna ulica
+cicha sypialnia

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import warnings
 from pathlib import Path
 from typing import Any
@@ -33,6 +34,14 @@ def get_emotion_vector(embedder, terms: list[str], language: str) -> np.ndarray:
     return mean_vector([embedder.embed(term, language) for term in terms])
 
 
+def get_shuffled_emotion_id(config: ExperimentConfig, emotion_id: str) -> str:
+    emotion_ids = list(config.emotions)
+    if len(emotion_ids) < 2:
+        raise ValueError("shuffled_emotion wymaga co najmniej dwoch emocji w konfiguracji.")
+    index = emotion_ids.index(emotion_id)
+    return emotion_ids[(index + 1) % len(emotion_ids)]
+
+
 def get_neutral_vector(
     embedder,
     neutral_terms: list[str],
@@ -56,6 +65,8 @@ def nearest_neighbors(
     embedder,
     language: str,
     top_k: int,
+    category_vector: np.ndarray,
+    emotion_direction: np.ndarray,
 ) -> list[dict[str, Any]]:
     if not candidate_records:
         raise ValueError("Lista kandydatow jest pusta.")
@@ -63,12 +74,19 @@ def nearest_neighbors(
     validate_same_dimension([query_vector, *vectors])
 
     query_vector = query_vector / np.linalg.norm(query_vector)
+    emotion_direction_norm = np.linalg.norm(emotion_direction)
+    if emotion_direction_norm == 0.0:
+        normalized_direction = emotion_direction
+    else:
+        normalized_direction = emotion_direction / emotion_direction_norm
     rows: list[dict[str, Any]] = []
     for record, vector in zip(candidate_records, vectors):
         vector = vector / np.linalg.norm(vector)
+        candidate_delta = vector - category_vector
         rows.append({
             **record,
             "cosine_similarity": float(np.dot(query_vector, vector)),
+            "projection_on_emotion_direction": float(np.dot(candidate_delta, normalized_direction)),
         })
     rows.sort(key=lambda item: item["cosine_similarity"], reverse=True)
     for rank, row in enumerate(rows[:top_k], start=1):
@@ -76,13 +94,130 @@ def nearest_neighbors(
     return rows[:top_k]
 
 
-def run_experiment(config: ExperimentConfig) -> list[dict[str, Any]]:
+def deterministic_random_direction(
+    dimension: int,
+    seed: int,
+    *parts: str,
+) -> np.ndarray:
+    raw = "|".join([str(seed), *parts])
+    digest = hashlib.sha256(raw.encode("utf-8")).digest()
+    rng_seed = int.from_bytes(digest[:8], byteorder="little", signed=False)
+    rng = np.random.default_rng(rng_seed)
+    vector = rng.normal(size=dimension).astype(np.float32)
+    norm = np.linalg.norm(vector)
+    return vector / norm if norm else vector
+
+
+def build_query_for_condition(
+    condition: str,
+    category_vector: np.ndarray,
+    emotion_vector: np.ndarray,
+    neutral_vector: np.ndarray,
+    random_direction: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    if condition in {"emotion", "shuffled_emotion"}:
+        direction = emotion_vector - neutral_vector
+    elif condition == "identity":
+        direction = neutral_vector - neutral_vector
+    elif condition == "random":
+        direction = random_direction
+    else:
+        raise ValueError(f"Nieznany warunek kontrolny: {condition}")
+    query = category_vector + direction
+    query_norm = np.linalg.norm(query)
+    if query_norm == 0.0:
+        raise ValueError("Query vector ma norme 0.")
+    return query / query_norm, direction
+
+
+def bootstrap_stability(
+    *,
+    config: ExperimentConfig,
+    embedder,
+    model_name: str,
+    language: str,
+    category_id: str,
+    category_vector: np.ndarray,
+    candidate_records: list[dict[str, str]],
+    emotion_id: str,
+    emotion_strategy: str,
+    emotion_terms: list[str],
+    neutral_strategy: str,
+    neutral_terms: list[str],
+    reference_direction: np.ndarray,
+    reference_candidates: set[str],
+) -> list[dict[str, Any]]:
+    if config.bootstrap_iterations <= 0:
+        return []
+    if len(emotion_terms) < 2 and len(neutral_terms) < 2:
+        return []
+
+    records: list[dict[str, Any]] = []
+    for iteration in range(1, config.bootstrap_iterations + 1):
+        rng = np.random.default_rng(
+            int.from_bytes(
+                hashlib.sha256(
+                    f"{config.random_seed}|{model_name}|{language}|{category_id}|"
+                    f"{emotion_id}|{emotion_strategy}|{neutral_strategy}|{iteration}".encode("utf-8")
+                ).digest()[:8],
+                byteorder="little",
+                signed=False,
+            )
+        )
+        sampled_emotion = [
+            emotion_terms[int(rng.integers(0, len(emotion_terms)))]
+            for _ in range(max(1, len(emotion_terms)))
+        ]
+        sampled_neutral = [
+            neutral_terms[int(rng.integers(0, len(neutral_terms)))]
+            for _ in range(max(1, len(neutral_terms)))
+        ]
+        boot_emotion = get_emotion_vector(embedder, sampled_emotion, language)
+        boot_neutral = get_emotion_vector(embedder, sampled_neutral, language)
+        boot_direction = boot_emotion - boot_neutral
+        boot_query = category_vector + boot_direction
+        boot_query = boot_query / np.linalg.norm(boot_query)
+        boot_rows = nearest_neighbors(
+            boot_query,
+            candidate_records,
+            embedder,
+            language,
+            config.top_k,
+            category_vector,
+            reference_direction,
+        )
+        boot_candidates = {row["candidate"] for row in boot_rows}
+        union = reference_candidates | boot_candidates
+        reference_norm = np.linalg.norm(reference_direction)
+        boot_norm = np.linalg.norm(boot_direction)
+        direction_cosine = float(
+            np.dot(reference_direction, boot_direction) / (reference_norm * boot_norm)
+        ) if reference_norm and boot_norm else 0.0
+        records.append({
+            "model": model_name,
+            "language": language,
+            "category": category_id,
+            "emotion": emotion_id,
+            "emotion_strategy": emotion_strategy,
+            "neutral_strategy": neutral_strategy,
+            "bootstrap_iteration": iteration,
+            "sampled_emotion_terms": "; ".join(sampled_emotion),
+            "sampled_neutral_terms": "; ".join(sampled_neutral),
+            "direction_cosine_to_reference": direction_cosine,
+            "top_k_jaccard_to_reference": len(reference_candidates & boot_candidates) / len(union) if union else 0.0,
+            "average_similarity_top_k": float(np.mean([row["cosine_similarity"] for row in boot_rows])),
+        })
+    return records
+
+
+def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     models = enabled_models(config)
     if not models:
         raise ValueError("Brak wlaczonych modeli w config.yaml.")
 
     cache = EmbeddingCache(config.cache_path)
     rows: list[dict[str, Any]] = []
+    stability_rows: list[dict[str, Any]] = []
 
     for model_name, model in models.items():
         embedder = get_embedder(model, cache)
@@ -124,62 +259,135 @@ def run_experiment(config: ExperimentConfig) -> list[dict[str, Any]]:
                                 neutral_strategy,
                             )
                             validate_same_dimension([category_vector, emotion_vector, neutral_vector])
-                            query_vector = category_vector + (emotion_vector - neutral_vector)
-                            query_vector = query_vector / np.linalg.norm(query_vector)
-
-                            top_rows = nearest_neighbors(
-                                query_vector,
-                                candidate_records,
-                                embedder,
+                            reference_direction = emotion_vector - neutral_vector
+                            random_direction = deterministic_random_direction(
+                                len(category_vector),
+                                config.random_seed,
+                                model_name,
                                 language,
-                                config.top_k,
+                                category_id,
+                                emotion_id,
                             )
-                            avg_similarity = float(np.mean([
-                                row["cosine_similarity"] for row in top_rows
-                            ]))
-                            retention = float(np.mean([
-                                row["candidate_category"] == category_id for row in top_rows
-                            ]))
 
-                            for row in top_rows:
-                                candidate = row["candidate"]
-                                identical_category = candidate.strip().lower() == category_text.strip().lower()
-                                contains_emotion = contains_any(candidate, emotion_terms)
-                                if identical_category:
-                                    warnings.warn(
-                                        f"Top-{row['rank']} zawiera sama kategorie: {candidate!r}"
+                            reference_candidates: set[str] | None = None
+                            for condition in config.control_conditions:
+                                condition_emotion_id = emotion_id
+                                condition_emotion_terms = emotion_terms
+                                condition_emotion_vector = emotion_vector
+                                if condition == "shuffled_emotion":
+                                    condition_emotion_id = get_shuffled_emotion_id(config, emotion_id)
+                                    condition_emotion_terms = get_emotion_terms(
+                                        config,
+                                        condition_emotion_id,
+                                        language,
+                                        emotion_strategy,
                                     )
-                                if contains_emotion:
-                                    warnings.warn(
-                                        f"Top-{row['rank']} zawiera slowo/fraze emocji: {candidate!r}"
+                                    if not condition_emotion_terms:
+                                        continue
+                                    condition_emotion_vector = get_emotion_vector(
+                                        embedder,
+                                        condition_emotion_terms,
+                                        language,
                                     )
 
-                                rows.append({
-                                    "model": model_name,
-                                    "model_id": model.model_id,
-                                    "pooling_strategy": model.pooling_strategy or "",
-                                    "language": language,
-                                    "category": category_id,
-                                    "category_text": category_text,
-                                    "emotion": emotion_id,
-                                    "emotion_strategy": emotion_strategy,
-                                    "emotion_terms": "; ".join(emotion_terms),
-                                    "neutral_strategy": neutral_strategy,
-                                    "neutral_terms": "; ".join(selected_neutral),
-                                    "candidate": candidate,
-                                    "candidate_category": row["candidate_category"],
-                                    "rank": row["rank"],
-                                    "cosine_similarity": row["cosine_similarity"],
-                                    "same_category": row["candidate_category"] == category_id,
-                                    "candidate_identical_to_category": identical_category,
-                                    "candidate_contains_emotion": contains_emotion,
-                                    "average_similarity_top_k": avg_similarity,
-                                    "category_retention_at_k": retention,
-                                })
-    return rows
+                                query_vector, direction = build_query_for_condition(
+                                    condition,
+                                    category_vector,
+                                    condition_emotion_vector,
+                                    neutral_vector,
+                                    random_direction,
+                                )
+
+                                top_rows = nearest_neighbors(
+                                    query_vector,
+                                    candidate_records,
+                                    embedder,
+                                    language,
+                                    config.top_k,
+                                    category_vector,
+                                    reference_direction,
+                                )
+                                avg_similarity = float(np.mean([
+                                    row["cosine_similarity"] for row in top_rows
+                                ]))
+                                avg_projection = float(np.mean([
+                                    row["projection_on_emotion_direction"] for row in top_rows
+                                ]))
+                                retention = float(np.mean([
+                                    row["candidate_category"] == category_id for row in top_rows
+                                ]))
+
+                                if condition == "emotion":
+                                    reference_candidates = {row["candidate"] for row in top_rows}
+
+                                for row in top_rows:
+                                    candidate = row["candidate"]
+                                    identical_category = candidate.strip().lower() == category_text.strip().lower()
+                                    contains_emotion = contains_any(candidate, emotion_terms)
+                                    if identical_category:
+                                        warnings.warn(
+                                            f"Top-{row['rank']} zawiera sama kategorie: {candidate!r}"
+                                        )
+                                    if contains_emotion:
+                                        warnings.warn(
+                                            f"Top-{row['rank']} zawiera slowo/fraze emocji: {candidate!r}"
+                                        )
+
+                                    rows.append({
+                                        "model": model_name,
+                                        "model_id": model.model_id,
+                                        "pooling_strategy": model.pooling_strategy or "",
+                                        "language": language,
+                                        "category": category_id,
+                                        "category_text": category_text,
+                                        "emotion": emotion_id,
+                                        "condition": condition,
+                                        "condition_emotion": condition_emotion_id,
+                                        "emotion_strategy": emotion_strategy,
+                                        "emotion_terms": "; ".join(emotion_terms),
+                                        "condition_emotion_terms": "; ".join(condition_emotion_terms),
+                                        "neutral_strategy": neutral_strategy,
+                                        "neutral_terms": "; ".join(selected_neutral),
+                                        "candidate": candidate,
+                                        "candidate_category": row["candidate_category"],
+                                        "rank": row["rank"],
+                                        "cosine_similarity": row["cosine_similarity"],
+                                        "projection_on_emotion_direction": row["projection_on_emotion_direction"],
+                                        "same_category": row["candidate_category"] == category_id,
+                                        "candidate_identical_to_category": identical_category,
+                                        "candidate_contains_emotion": contains_emotion,
+                                        "average_similarity_top_k": avg_similarity,
+                                        "average_projection_top_k": avg_projection,
+                                        "category_retention_at_k": retention,
+                                        "direction_norm": float(np.linalg.norm(direction)),
+                                        "query_norm": float(np.linalg.norm(query_vector)),
+                                    })
+
+                            if reference_candidates is not None:
+                                stability_rows.extend(bootstrap_stability(
+                                    config=config,
+                                    embedder=embedder,
+                                    model_name=model_name,
+                                    language=language,
+                                    category_id=category_id,
+                                    category_vector=category_vector,
+                                    candidate_records=candidate_records,
+                                    emotion_id=emotion_id,
+                                    emotion_strategy=emotion_strategy,
+                                    emotion_terms=emotion_terms,
+                                    neutral_strategy=neutral_strategy,
+                                    neutral_terms=selected_neutral,
+                                    reference_direction=reference_direction,
+                                    reference_candidates=reference_candidates,
+                                ))
+    return rows, stability_rows
 
 
-def export_results(rows: list[dict[str, Any]], output_dir: Path) -> None:
+def export_results(
+    rows: list[dict[str, Any]],
+    stability_rows: list[dict[str, Any]],
+    output_dir: Path,
+) -> None:
     if not rows:
         raise ValueError("Brak wynikow do eksportu.")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -196,23 +404,29 @@ def export_results(rows: list[dict[str, Any]], output_dir: Path) -> None:
     frame.to_excel(output_dir / "results_full.xlsx", index=False)
     write_summaries(frame, output_dir)
     create_manual_rating_template(frame, output_dir / "manual_rating_template.xlsx")
+    if stability_rows:
+        stability = pd.DataFrame(stability_rows)
+        stability.to_csv(output_dir / "bootstrap_stability.csv", index=False)
+        stability.to_excel(output_dir / "bootstrap_stability.xlsx", index=False)
 
 
 def write_summaries(frame, output_dir: Path) -> None:
     top10 = frame[frame["rank"] <= 10].copy()
     by_strategy = (
-        top10.groupby(["emotion_strategy", "neutral_strategy"], dropna=False)
+        top10.groupby(["condition", "emotion_strategy", "neutral_strategy"], dropna=False)
         .agg(
             mean_cosine_similarity_top_10=("cosine_similarity", "mean"),
+            mean_projection_top_10=("projection_on_emotion_direction", "mean"),
             category_retention_at_10=("same_category", "mean"),
             unique_candidates=("candidate", "nunique"),
         )
         .reset_index()
     )
     by_model = (
-        top10.groupby(["model", "pooling_strategy"], dropna=False)
+        top10.groupby(["model", "pooling_strategy", "condition"], dropna=False)
         .agg(
             mean_cosine_similarity_top_10=("cosine_similarity", "mean"),
+            mean_projection_top_10=("projection_on_emotion_direction", "mean"),
             category_retention_at_10=("same_category", "mean"),
             unique_candidates=("candidate", "nunique"),
         )
@@ -229,6 +443,7 @@ def create_manual_rating_template(frame, path: Path) -> None:
         "category",
         "emotion",
         "emotion_strategy",
+        "condition",
         "neutral_strategy",
         "candidate",
         "rank",
@@ -244,6 +459,7 @@ def create_manual_rating_template(frame, path: Path) -> None:
         "category",
         "emotion",
         "emotion_strategy",
+        "condition",
         "neutral_strategy",
         "candidate",
         "rank",
@@ -294,9 +510,11 @@ def main() -> None:
     if args.test:
         config = make_test_config(config, top_k=5)
 
-    rows = run_experiment(config)
-    export_results(rows, config.output_dir)
+    rows, stability_rows = run_experiment(config)
+    export_results(rows, stability_rows, config.output_dir)
     print(f"Zapisano {len(rows)} wierszy do {config.output_dir}")
+    if stability_rows:
+        print(f"Zapisano {len(stability_rows)} wierszy bootstrap stability")
 
 
 if __name__ == "__main__":

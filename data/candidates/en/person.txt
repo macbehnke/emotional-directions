@@ -1,12 +1,30 @@
+person
 friend
-stranger
-teacher
-enemy
-doctor
 child
-happy person
-angry man
-sad woman
-disgusted customer
-lonely person
-kind neighbor
+parent
+teacher
+doctor
+neighbor
+stranger
+partner
+guest
+hero
+comedian
+musician
+athlete
+kind nurse
+angry customer
+sad widow
+lonely student
+frightened child
+abusive bully
+cruel boss
+jealous rival
+beloved grandmother
+excited fan
+happy bride
+grieving father
+annoying passenger
+trusted colleague
+dangerous criminal
+calm observer

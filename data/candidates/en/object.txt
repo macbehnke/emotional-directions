@@ -1,10 +1,30 @@
+object
+book
 chair
 phone
-knife
-toy
-dirty cloth
-broken mirror
+wallet
+key
+lamp
+table
+mirror
+flower
 gift
-old book
-rusty tool
-flower vase
+photograph
+toy
+ring
+blanket
+broken glass
+dirty towel
+rusty knife
+used bandage
+dead battery
+old shoe
+trash bag
+spider web
+warning sign
+love letter
+funny mask
+award medal
+hospital needle
+locked door
+torn photograph

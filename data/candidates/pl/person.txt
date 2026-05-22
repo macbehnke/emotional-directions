@@ -1,12 +1,30 @@
+osoba
 przyjaciel
-nieznajomy
-nauczyciel
-wróg
-lekarz
 dziecko
-szczęśliwa osoba
-zły mężczyzna
-smutna kobieta
-obrzydzony klient
-samotna osoba
-życzliwy sąsiad
+rodzic
+nauczyciel
+lekarz
+sąsiad
+nieznajomy
+partner
+gość
+bohater
+komik
+muzyk
+sportowiec
+życzliwa pielęgniarka
+zły klient
+smutna wdowa
+samotny student
+przestraszone dziecko
+odrażający prześladowca
+okrutny szef
+zazdrosny rywal
+kochana babcia
+podekscytowany kibic
+radosna panna młoda
+pogrążony w żałobie ojciec
+irytujący pasażer
+zaufany kolega
+niebezpieczny przestępca
+spokojny obserwator

@@ -1,10 +1,30 @@
 home
 park
+school
+office
 hospital
 cemetery
+kitchen
+library
+train station
+airport
+church
+museum
+restaurant
+playground
 sunny beach
 music festival
-dirty alley
 beautiful garden
+cozy cafe
+wedding hall
+childhood home
+dirty alley
 abandoned building
-kitchen
+dark basement
+prison cell
+emergency room
+funeral home
+crowded bus stop
+polluted river
+dangerous street
+silent bedroom

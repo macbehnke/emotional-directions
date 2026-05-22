@@ -1,10 +1,30 @@
+przedmiot
+książka
 krzesło
 telefon
-nóż
-zabawka
-brudna szmata
-rozbite lustro
+portfel
+klucz
+lampa
+stół
+lustro
+kwiat
 prezent
-stara książka
-zardzewiałe narzędzie
-wazon
+fotografia
+zabawka
+pierścionek
+koc
+rozbite szkło
+brudny ręcznik
+zardzewiały nóż
+zużyty bandaż
+rozładowana bateria
+stary but
+worek śmieci
+pajęczyna
+znak ostrzegawczy
+list miłosny
+śmieszna maska
+medal
+szpitalna igła
+zamknięte drzwi
+podarta fotografia

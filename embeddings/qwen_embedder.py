@@ -6,7 +6,7 @@ from embeddings.base import Embedder
 
 
 class SentenceTransformerEmbedder(Embedder):
-    """Qwen3, stella-pl, OpenAI-compatible local baselines via sentence-transformers."""
+    """Qwen3, MMLW-RoBERTa, and other local sentence-transformers baselines."""
 
     _loaded_models: dict[str, object] = {}
 

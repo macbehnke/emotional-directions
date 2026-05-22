@@ -2,12 +2,29 @@ jabłko
 chleb
 ser
 ciasto
+świeże owoce
+posiłek w restauracji
+domowa zupa
+ciepły chleb
+słodki deser
+tort urodzinowy
+ulubione jedzenie
+czekolada
+kawa
+ostre curry
+sałatka
 zepsute jedzenie
+kwaśne mleko
 pleśń
 robaki
 śmieci
-posiłek w restauracji
-świeże owoce
-kwaśne mleko
 spalony obiad
-słodki deser
+czerstwy chleb
+surowe mięso
+zepsuty jogurt
+brudny talerz
+skażona woda
+tłuste resztki
+gorzkie lekarstwo
+szpitalne jedzenie
+uliczna przekąska

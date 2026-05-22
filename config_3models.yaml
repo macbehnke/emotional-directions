@@ -4,6 +4,19 @@ candidate_root: "data/candidates"
 cache_path: "cache/embeddings_cache_3models.jsonl"
 output_dir: "outputs/three_models"
 search_scope: "category"
+random_seed: 42
+bootstrap_iterations: 100
+
+# Main condition plus controls motivated by interpretable-dimension and seed-stability work.
+control_conditions:
+  - emotion
+  - identity
+  - random
+  - shuffled_emotion
+
+# Optional discrete-emotion lexicons can be added later as CSV files.
+# Expected columns: candidate, emotion_label, emotion_intensity or candidate, emotion_label.
+discrete_emotion_lexicon_paths: {}
 
 # Main strategy for the model comparison. This keeps the comparison focused:
 # the representation strategy is fixed, only the model changes.
@@ -39,6 +52,13 @@ models:
     torch_dtype: auto
     max_length: 128
     trust_remote_code: true
+
+  mmlw_roberta_large:
+    enabled: true
+    backend: sentence-transformers
+    model_id: "sdadas/mmlw-roberta-large"
+    embedding_dimension: null
+    normalize: true
 
 categories:
   food:

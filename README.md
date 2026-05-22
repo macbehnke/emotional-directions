@@ -34,7 +34,7 @@ Konfiguracja jest w `config.yaml`.
 - `qwen3_embedding_0_6b` - lekki Qwen przez Hugging Face / sentence-transformers, do 1024 wymiarow.
 - `qwen3_embedding_8b` - wiekszy Qwen do glownego porownania, `Qwen/Qwen3-Embedding-8B`, do 4096 wymiarow.
 - `bielik_1_5b_v3` - Bielik przez hidden states i pooling. To wariant eksperymentalny, bo Bielik nie jest klasycznym modelem embeddingowym. Wynikow nie nalezy bezposrednio porownywac z wyspecjalizowanymi modelami embeddingowymi.
-- `stella_pl` - `sdadas/stella-pl`, rekomendowany polsko-angielski baseline embeddingowy.
+- `mmlw_roberta_large` - `sdadas/mmlw-roberta-large`, polski model embeddingowy porownywalny z wyspecjalizowanymi encoderami.
 - `text_embedding_3_large` - placeholder pod opcjonalny model porownawczy.
 
 ## Instalacja
@@ -143,18 +143,39 @@ python experiment.py --config config.yaml --top_k 10
 python analysis.py --results outputs/results_full.csv
 ```
 
-## Porownanie trzech modeli: Bielik, Gemini, Qwen
+## Porownanie modeli: Bielik, Gemini, Qwen, MMLW-RoBERTa
 
 Gotowa konfiguracja jest w `config_3models.yaml`. Wlaczone sa tylko:
 
 - `bielik_1_5b_v3`
 - `gemini`
 - `qwen3_embedding_8b`
+- `mmlw_roberta_large`
 
 Domyslnie uzywa jednej glownej strategii:
 
 ```text
 centroid_phrases + neutral_centroid
+```
+
+Projekt koncentruje sie na dyskretnych emocjach, takich jak `sadness`,
+`disgust`, `joy` i `anger`, a nie na wymiarach VAD jako glownym celu.
+Jesli dodasz zewnetrzne leksykony emocji, powinny miec etykiety dyskretnych
+emocji, np. `candidate, emotion_label, emotion_intensity`.
+
+Konfiguracja zawiera tez warunki kontrolne:
+
+- `emotion` - wlasciwy kierunek emocji,
+- `identity` - kontrola `category + neutral - neutral`,
+- `random` - losowy, deterministyczny kierunek,
+- `shuffled_emotion` - kierunek innej emocji przypisany do tej samej kategorii.
+
+Wyniki zawieraja dodatkowo `projection_on_emotion_direction`, czyli projekcje
+kandydata na badany kierunek emocji. Bootstrap stabilnosci zapisuje sie do:
+
+```text
+outputs/three_models/bootstrap_stability.csv
+outputs/three_models/bootstrap_stability.xlsx
 ```
 
 Uruchomienie:
@@ -168,7 +189,7 @@ python analysis.py --results outputs/three_models/results_full.csv
 Mozesz tez wymusic modele z CLI:
 
 ```bash
-python experiment.py --config config_3models.yaml --models bielik_1_5b_v3,gemini,qwen3_embedding_8b
+python experiment.py --config config_3models.yaml --models bielik_1_5b_v3,gemini,qwen3_embedding_8b,mmlw_roberta_large
 ```
 
 ## Pliki wynikowe
@@ -184,5 +205,6 @@ Analiza zapisuje:
 - `outputs/summary_by_strategy.csv`
 - `outputs/summary_by_model.csv`
 - `outputs/strategy_overlap_top10.csv`
+- `outputs/model_output_similarity_top10.csv`
 
 Wyniki zawieraja m.in. `rank`, `cosine_similarity`, `same_category`, `candidate_identical_to_category`, `candidate_contains_emotion`, `average_similarity_top_k` i `category_retention_at_k`.

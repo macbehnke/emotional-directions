@@ -53,6 +53,10 @@ class ExperimentConfig:
     top_k: int
     cache_path: Path
     output_dir: Path
+    control_conditions: list[str]
+    bootstrap_iterations: int
+    random_seed: int
+    discrete_emotion_lexicon_paths: dict[str, Path]
 
 
 def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
@@ -97,6 +101,13 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
         top_k=int(data.get("top_k", 10)),
         cache_path=_resolve_path(base_dir, data.get("cache_path", "cache/embeddings_cache.jsonl")),
         output_dir=_resolve_path(base_dir, data.get("output_dir", "outputs")),
+        control_conditions=list(data.get("control_conditions", ["emotion"])),
+        bootstrap_iterations=int(data.get("bootstrap_iterations", 0)),
+        random_seed=int(data.get("random_seed", 42)),
+        discrete_emotion_lexicon_paths={
+            language: _resolve_path(base_dir, path)
+            for language, path in data.get("discrete_emotion_lexicon_paths", {}).items()
+        },
     )
 
 
@@ -132,6 +143,10 @@ def make_test_config(config: ExperimentConfig, top_k: int = 5) -> ExperimentConf
         top_k=top_k,
         cache_path=config.cache_path,
         output_dir=config.output_dir,
+        control_conditions=config.control_conditions,
+        bootstrap_iterations=min(config.bootstrap_iterations, 10),
+        random_seed=config.random_seed,
+        discrete_emotion_lexicon_paths=config.discrete_emotion_lexicon_paths,
     )
 
 

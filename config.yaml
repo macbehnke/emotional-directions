@@ -3,10 +3,23 @@ languages: ["en", "pl", "zh"]
 candidate_root: "data/candidates"
 cache_path: "cache/embeddings_cache.jsonl"
 output_dir: "outputs"
+random_seed: 42
+bootstrap_iterations: 100
 
 # category: nearest neighbors only inside language/category file.
 # language: nearest neighbors inside all category files for this language.
 search_scope: "category"
+
+control_conditions:
+  - emotion
+  - identity
+  - random
+  - shuffled_emotion
+
+# Optional discrete-emotion lexicons. This project focuses on discrete emotion labels,
+# not valence/arousal/dominance as the main target.
+# Expected columns: candidate, emotion_label, emotion_intensity or candidate, emotion_label.
+discrete_emotion_lexicon_paths: {}
 
 emotion_representation_strategies:
   - single_word
@@ -48,10 +61,10 @@ models:
     pooling_strategy: mean
     normalize: true
 
-  stella_pl:
+  mmlw_roberta_large:
     enabled: false
     backend: sentence-transformers
-    model_id: "sdadas/stella-pl"
+    model_id: "sdadas/mmlw-roberta-large"
     embedding_dimension: null
     normalize: true
 
