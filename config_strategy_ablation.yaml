@@ -1,27 +1,15 @@
 top_k: 10
 languages: ["en", "pl", "zh"]
 candidate_root: "data/candidates"
-cache_path: "cache/embeddings_cache.jsonl"
-output_dir: "outputs"
-random_seed: 42
-bootstrap_iterations: 100
-
-# category: nearest neighbors only inside language/category file.
-# language: nearest neighbors inside all category files for this language.
+cache_path: "cache/embeddings_cache_3models.jsonl"
+output_dir: "outputs/strategy_ablation"
 search_scope: "category"
 exclude_query_terms_from_candidates: true
+random_seed: 42
+bootstrap_iterations: 30
 
-control_conditions:
-  - emotion
-  - identity
-  - random
-  - shuffled_emotion
-
-# Optional discrete-emotion lexicons. This project focuses on discrete emotion labels,
-# not valence/arousal/dominance as the main target.
-# Expected columns: candidate, emotion_label, emotion_intensity or candidate, emotion_label.
-discrete_emotion_lexicon_paths: {}
-
+# Strategy-selection run. Use this after/past the pilot to decide whether
+# centroid_phrases should remain the final strategy.
 emotion_representation_strategies:
   - single_word
   - feeling_phrase
@@ -29,54 +17,49 @@ emotion_representation_strategies:
   - centroid_phrases
 
 neutral_strategies:
-  - single_neutral
   - neutral_centroid
+
+control_conditions:
+  - emotion
+  - identity
+  - random
+  - shuffled_emotion
+
+discrete_emotion_lexicon_paths: {}
 
 models:
   gemini:
-    enabled: false
+    enabled: true
     backend: gemini
     model_id: "models/gemini-embedding-001"
     embedding_dimension: 3072
     normalize: true
 
-  qwen3_embedding_0_6b:
-    enabled: false
-    backend: sentence-transformers
-    model_id: "Qwen/Qwen3-Embedding-0.6B"
-    embedding_dimension: 1024
-    normalize: true
-
   qwen3_embedding_8b:
-    enabled: false
+    enabled: true
     backend: sentence-transformers
     model_id: "Qwen/Qwen3-Embedding-8B"
     embedding_dimension: 4096
     normalize: true
 
-  bielik_1_5b_v3:
-    enabled: false
-    backend: bielik
-    model_id: "speakleash/Bielik-1.5B-v3.0-Instruct"
-    embedding_dimension: null
-    pooling_strategy: mean
-    normalize: true
-
   mmlw_roberta_large:
-    enabled: false
+    enabled: true
     backend: sentence-transformers
     model_id: "sdadas/mmlw-roberta-large"
     embedding_dimension: null
     normalize: true
 
-  # Optional comparison placeholder. Implement an OpenAI embedder or replace
-  # with any sentence-transformers model if you want a local baseline.
-  text_embedding_3_large:
-    enabled: false
-    backend: openai
-    model_id: "text-embedding-3-large"
-    embedding_dimension: 3072
+  bielik_1_5b_v3:
+    enabled: true
+    backend: bielik
+    model_id: "speakleash/Bielik-1.5B-v3.0-Instruct"
+    embedding_dimension: null
+    pooling_strategy: mean
     normalize: true
+    device: auto
+    torch_dtype: auto
+    max_length: 128
+    trust_remote_code: true
 
 categories:
   food:
@@ -100,7 +83,6 @@ categories:
     pl: "sytuacja"
     zh: "情况"
 
-# TODO: Tu wklej pelna liste emocji z projektu.
 emotions:
   sadness:
     en:

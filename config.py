@@ -57,6 +57,7 @@ class ExperimentConfig:
     bootstrap_iterations: int
     random_seed: int
     discrete_emotion_lexicon_paths: dict[str, Path]
+    exclude_query_terms_from_candidates: bool
 
 
 def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
@@ -108,6 +109,9 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
             language: _resolve_path(base_dir, path)
             for language, path in data.get("discrete_emotion_lexicon_paths", {}).items()
         },
+        exclude_query_terms_from_candidates=bool(
+            data.get("exclude_query_terms_from_candidates", True)
+        ),
     )
 
 
@@ -147,6 +151,7 @@ def make_test_config(config: ExperimentConfig, top_k: int = 5) -> ExperimentConf
         bootstrap_iterations=min(config.bootstrap_iterations, 10),
         random_seed=config.random_seed,
         discrete_emotion_lexicon_paths=config.discrete_emotion_lexicon_paths,
+        exclude_query_terms_from_candidates=config.exclude_query_terms_from_candidates,
     )
 
 

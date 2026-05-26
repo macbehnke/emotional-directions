@@ -94,6 +94,19 @@ def nearest_neighbors(
     return rows[:top_k]
 
 
+def filter_candidate_records(
+    candidate_records: list[dict[str, str]],
+    blocked_terms: list[str],
+) -> list[dict[str, str]]:
+    blocked = {term.strip().lower() for term in blocked_terms if term and term.strip()}
+    if not blocked:
+        return candidate_records
+    return [
+        record for record in candidate_records
+        if record["candidate"].strip().lower() not in blocked
+    ]
+
+
 def deterministic_random_direction(
     dimension: int,
     seed: int,
@@ -249,6 +262,18 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
                         )
                         if not emotion_terms:
                             continue
+                        if config.exclude_query_terms_from_candidates:
+                            candidate_records_for_query = filter_candidate_records(
+                                candidate_records,
+                                [category_text, *emotion_terms],
+                            )
+                        else:
+                            candidate_records_for_query = candidate_records
+                        if not candidate_records_for_query:
+                            warnings.warn(
+                                f"Po filtrowaniu brak kandydatow: {language}/{category_id}/{emotion_id}"
+                            )
+                            continue
                         emotion_vector = get_emotion_vector(embedder, emotion_terms, language)
 
                         for neutral_strategy in config.neutral_strategies:
@@ -300,7 +325,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
 
                                 top_rows = nearest_neighbors(
                                     query_vector,
-                                    candidate_records,
+                                    candidate_records_for_query,
                                     embedder,
                                     language,
                                     config.top_k,
@@ -371,7 +396,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
                                     language=language,
                                     category_id=category_id,
                                     category_vector=category_vector,
-                                    candidate_records=candidate_records,
+                                    candidate_records=candidate_records_for_query,
                                     emotion_id=emotion_id,
                                     emotion_strategy=emotion_strategy,
                                     emotion_terms=emotion_terms,

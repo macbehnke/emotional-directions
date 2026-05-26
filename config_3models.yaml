@@ -4,6 +4,7 @@ candidate_root: "data/candidates"
 cache_path: "cache/embeddings_cache_3models.jsonl"
 output_dir: "outputs/three_models"
 search_scope: "category"
+exclude_query_terms_from_candidates: true
 random_seed: 42
 bootstrap_iterations: 100
 

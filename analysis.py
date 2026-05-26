@@ -157,6 +157,7 @@ def run_analysis(results_path: Path) -> None:
     )
     if "condition" in frame.columns:
         summarize_controls(frame).to_csv(output_dir / "summary_by_condition.csv", index=False)
+        summarize_control_deltas(frame).to_csv(output_dir / "summary_control_deltas.csv", index=False)
     print(f"Zapisano analizy w {output_dir}")
 
 
@@ -172,6 +173,49 @@ def summarize_controls(frame: pd.DataFrame) -> pd.DataFrame:
         )
         .reset_index()
     )
+
+
+def summarize_control_deltas(frame: pd.DataFrame) -> pd.DataFrame:
+    top10 = frame[frame["rank"] <= 10].copy()
+    keys = ["model", "language", "category", "emotion", "emotion_strategy", "neutral_strategy"]
+    grouped = (
+        top10.groupby([*keys, "condition"], dropna=False)
+        .agg(
+            mean_projection=("projection_on_emotion_direction", "mean"),
+            mean_cosine=("cosine_similarity", "mean"),
+            unique_candidates=("candidate", "nunique"),
+        )
+        .reset_index()
+    )
+    grouped["condition_projection"] = grouped["condition"].map({
+        "emotion": "projection_emotion",
+        "identity": "projection_identity",
+        "random": "projection_random",
+        "shuffled_emotion": "projection_shuffled_emotion",
+    }).fillna(grouped["condition"])
+    projection = grouped.pivot_table(
+        index=keys,
+        columns="condition_projection",
+        values="mean_projection",
+    ).reset_index()
+    for column in [
+        "projection_emotion",
+        "projection_identity",
+        "projection_random",
+        "projection_shuffled_emotion",
+    ]:
+        if column not in projection:
+            projection[column] = pd.NA
+    projection["delta_emotion_minus_identity"] = (
+        projection["projection_emotion"] - projection["projection_identity"]
+    )
+    projection["delta_emotion_minus_random"] = (
+        projection["projection_emotion"] - projection["projection_random"]
+    )
+    projection["delta_emotion_minus_shuffled"] = (
+        projection["projection_emotion"] - projection["projection_shuffled_emotion"]
+    )
+    return projection
 
 
 def parse_args() -> argparse.Namespace:
