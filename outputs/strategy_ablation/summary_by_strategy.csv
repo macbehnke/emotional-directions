@@ -1,0 +1,17 @@
+condition,emotion_strategy,neutral_strategy,mean_cosine_similarity_top_10,category_retention_at_10,unique_candidates,mean_projection_top_10
+emotion,centroid_phrases,neutral_centroid,0.6893346779172619,1.0,395,0.059848683385741085
+emotion,centroid_words,neutral_centroid,0.7212441252544523,1.0,394,0.04431492752749665
+emotion,feeling_phrase,neutral_centroid,0.6765982233732939,1.0,400,0.058064654352638134
+emotion,single_word,neutral_centroid,0.6887093122924367,1.0,399,0.044761955895980136
+identity,centroid_phrases,neutral_centroid,0.8020243604977926,1.0,281,0.021271884983337548
+identity,centroid_words,neutral_centroid,0.8020243604977926,1.0,281,0.01693934105930868
+identity,feeling_phrase,neutral_centroid,0.8020243604977926,1.0,281,0.0208976484351054
+identity,single_word,neutral_centroid,0.8020243604977926,1.0,281,0.016582583669151052
+random,centroid_phrases,neutral_centroid,0.5678224567323923,1.0,347,0.02239021887891187
+random,centroid_words,neutral_centroid,0.5678224567323923,1.0,347,0.017343519916394132
+random,feeling_phrase,neutral_centroid,0.5678224567323923,1.0,347,0.02185805778067635
+random,single_word,neutral_centroid,0.5678224567323923,1.0,347,0.016984421326366517
+shuffled_emotion,centroid_phrases,neutral_centroid,0.6893346779172619,1.0,395,0.04668270789838665
+shuffled_emotion,centroid_words,neutral_centroid,0.7212441252544523,1.0,394,0.02800633326553602
+shuffled_emotion,feeling_phrase,neutral_centroid,0.6765982233732939,1.0,400,0.04373903103167926
+shuffled_emotion,single_word,neutral_centroid,0.6887093122924367,1.0,399,0.026312592199392366
