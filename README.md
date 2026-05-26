@@ -192,6 +192,60 @@ Mozesz tez wymusic modele z CLI:
 python experiment.py --config config_3models.yaml --models bielik_1_5b_v3,gemini,qwen3_embedding_8b,mmlw_roberta_large
 ```
 
+## Final analysis run
+
+Po pilocie glowna konfiguracja finalna jest w `config_final.yaml`.
+Uzywa:
+
+- `centroid_phrases + neutral_centroid`,
+- warunkow kontrolnych `emotion`, `identity`, `random`, `shuffled_emotion`,
+- filtrowania kandydatow identycznych z kategoria albo seedami emocji,
+- modeli `gemini`, `qwen3_embedding_8b`, `bielik_1_5b_v3` i `mmlw_roberta_large`.
+
+Uruchomienie na klastrze:
+
+```bash
+cd /projects/laigai/emo_dir/emotional-directions
+source .venv/bin/activate
+
+export HF_HOME=/projects/laigai/hf_cache
+export HUGGINGFACE_HUB_CACHE=/projects/laigai/hf_cache/hub
+export TRANSFORMERS_CACHE=/projects/laigai/hf_cache/transformers
+export TORCH_HOME=/work/s152265/torch_cache
+export TMPDIR=/work/s152265/tmp
+export TEMP=/work/s152265/tmp
+export TMP=/work/s152265/tmp
+export PYTHONUTF8=1
+export HF_HUB_DISABLE_XET=1
+
+source ~/.secrets/hf_gemini.env
+
+python experiment.py --config config_final.yaml --top_k 10
+python analysis.py --results outputs/final_run/results_full.csv
+```
+
+Jesli chcesz ograniczyc finalny bieg do trzech modeli bez MMLW-RoBERTa:
+
+```bash
+python experiment.py --config config_final.yaml --top_k 10 --models bielik_1_5b_v3,gemini,qwen3_embedding_8b
+python analysis.py --results outputs/final_run/results_full.csv
+```
+
+Dodatkowy check strategii dyskretnych jest w
+`config_supplement_discrete_check.yaml`. Porownuje finalne
+`centroid_phrases` z `single_word`:
+
+```bash
+python experiment.py --config config_supplement_discrete_check.yaml --top_k 10
+python analysis.py --results outputs/supplement_discrete_check/results_full.csv
+```
+
+Analiza zapisuje dodatkowe pliki:
+
+- `final_model_report.csv` - zwiezle porownanie modeli dla finalnej strategii,
+- `final_strategy_report.csv` - zwiezle porownanie strategii, szczegolnie dla supplementary run,
+- `summary_control_deltas.csv` - roznice `emotion` wzgledem kontroli.
+
 ## Pliki wynikowe
 
 Eksperyment zapisuje:

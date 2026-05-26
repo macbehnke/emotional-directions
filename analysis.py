@@ -158,6 +158,11 @@ def run_analysis(results_path: Path) -> None:
     if "condition" in frame.columns:
         summarize_controls(frame).to_csv(output_dir / "summary_by_condition.csv", index=False)
         summarize_control_deltas(frame).to_csv(output_dir / "summary_control_deltas.csv", index=False)
+        final_model_report(frame).to_csv(output_dir / "final_model_report.csv", index=False)
+        final_strategy_report(frame, output_dir / "bootstrap_stability.csv").to_csv(
+            output_dir / "final_strategy_report.csv",
+            index=False,
+        )
     print(f"Zapisano analizy w {output_dir}")
 
 
@@ -216,6 +221,95 @@ def summarize_control_deltas(frame: pd.DataFrame) -> pd.DataFrame:
         projection["projection_emotion"] - projection["projection_shuffled_emotion"]
     )
     return projection
+
+
+def final_model_report(frame: pd.DataFrame) -> pd.DataFrame:
+    """Compact model comparison for the final fixed-strategy run."""
+    deltas = summarize_control_deltas(frame)
+    top10 = frame[frame["rank"] <= 10].copy()
+    emotion_only = top10[top10["condition"] == "emotion"].copy()
+    grouped = (
+        emotion_only.groupby(["model", "pooling_strategy"], dropna=False)
+        .agg(
+            mean_cosine_similarity_top_10=("cosine_similarity", "mean"),
+            mean_projection_top_10=("projection_on_emotion_direction", "mean"),
+            category_retention_at_10=("same_category", "mean"),
+            unique_candidates=("candidate", "nunique"),
+        )
+        .reset_index()
+    )
+    delta_grouped = (
+        deltas.groupby(["model"], dropna=False)
+        .agg(
+            delta_emotion_minus_identity=("delta_emotion_minus_identity", "mean"),
+            delta_emotion_minus_random=("delta_emotion_minus_random", "mean"),
+            delta_emotion_minus_shuffled=("delta_emotion_minus_shuffled", "mean"),
+        )
+        .reset_index()
+    )
+    report = grouped.merge(delta_grouped, on="model", how="left")
+    report["final_rank_score"] = (
+        report["delta_emotion_minus_identity"].fillna(0)
+        + report["delta_emotion_minus_random"].fillna(0)
+        + report["delta_emotion_minus_shuffled"].fillna(0)
+        + report["mean_projection_top_10"].fillna(0)
+    )
+    return report.sort_values("final_rank_score", ascending=False)
+
+
+def final_strategy_report(frame: pd.DataFrame, stability_path: Path) -> pd.DataFrame:
+    """Summarize strategy quality; useful for the supplementary strategy check."""
+    deltas = summarize_control_deltas(frame)
+    top10 = frame[frame["rank"] <= 10].copy()
+    emotion_only = top10[top10["condition"] == "emotion"].copy()
+    grouped = (
+        emotion_only.groupby(["emotion_strategy", "neutral_strategy"], dropna=False)
+        .agg(
+            mean_cosine_similarity_top_10=("cosine_similarity", "mean"),
+            mean_projection_top_10=("projection_on_emotion_direction", "mean"),
+            category_retention_at_10=("same_category", "mean"),
+            unique_candidates=("candidate", "nunique"),
+        )
+        .reset_index()
+    )
+    delta_grouped = (
+        deltas.groupby(["emotion_strategy", "neutral_strategy"], dropna=False)
+        .agg(
+            delta_emotion_minus_identity=("delta_emotion_minus_identity", "mean"),
+            delta_emotion_minus_random=("delta_emotion_minus_random", "mean"),
+            delta_emotion_minus_shuffled=("delta_emotion_minus_shuffled", "mean"),
+        )
+        .reset_index()
+    )
+    report = grouped.merge(delta_grouped, on=["emotion_strategy", "neutral_strategy"], how="left")
+    if stability_path.exists():
+        stability = pd.read_csv(stability_path)
+        stability_grouped = (
+            stability.groupby(["emotion_strategy", "neutral_strategy"], dropna=False)
+            .agg(
+                mean_direction_cosine=("direction_cosine_to_reference", "mean"),
+                mean_top_k_jaccard=("top_k_jaccard_to_reference", "mean"),
+            )
+            .reset_index()
+        )
+        report = report.merge(
+            stability_grouped,
+            on=["emotion_strategy", "neutral_strategy"],
+            how="left",
+        )
+    else:
+        report["mean_direction_cosine"] = np.nan
+        report["mean_top_k_jaccard"] = np.nan
+
+    report["final_rank_score"] = (
+        report["delta_emotion_minus_identity"].fillna(0)
+        + report["delta_emotion_minus_random"].fillna(0)
+        + report["delta_emotion_minus_shuffled"].fillna(0)
+        + report["mean_projection_top_10"].fillna(0)
+        + 0.05 * report["mean_direction_cosine"].fillna(0)
+        + 0.05 * report["mean_top_k_jaccard"].fillna(0)
+    )
+    return report.sort_values("final_rank_score", ascending=False)
 
 
 def parse_args() -> argparse.Namespace:

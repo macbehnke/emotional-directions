@@ -1,0 +1,33 @@
+inherit_from: config_3models.yaml
+
+# Final main run after the strategy-ablation pilot.
+# The pilot favored phrase centroids: strong emotion-control deltas plus the
+# most stable direction estimates. This config fixes the representation
+# strategy and compares models under the same experimental design.
+output_dir: "outputs/final_run"
+cache_path: "cache/embeddings_cache_3models.jsonl"
+top_k: 10
+bootstrap_iterations: 100
+exclude_query_terms_from_candidates: true
+
+emotion_representation_strategies:
+  - centroid_phrases
+
+neutral_strategies:
+  - neutral_centroid
+
+control_conditions:
+  - emotion
+  - identity
+  - random
+  - shuffled_emotion
+
+models:
+  gemini:
+    enabled: true
+  qwen3_embedding_8b:
+    enabled: true
+  bielik_1_5b_v3:
+    enabled: true
+  mmlw_roberta_large:
+    enabled: true

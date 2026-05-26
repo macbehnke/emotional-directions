@@ -62,7 +62,7 @@ class ExperimentConfig:
 
 def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
     path = Path(path)
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data = _load_yaml_with_inheritance(path)
     base_dir = path.resolve().parent
 
     models = {
@@ -162,3 +162,31 @@ def enabled_models(config: ExperimentConfig) -> dict[str, ModelConfig]:
 def _resolve_path(base_dir: Path, value: str | Path) -> Path:
     path = Path(value)
     return path if path.is_absolute() else base_dir / path
+
+
+def _load_yaml_with_inheritance(path: Path) -> dict[str, Any]:
+    """Load YAML and optionally merge it over another config.
+
+    Small final-run configs can set `inherit_from: base.yaml` and override only
+    the fields that differ from the base experiment.
+    """
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    inherited = data.pop("inherit_from", None)
+    if not inherited:
+        return data
+
+    parent_path = Path(inherited)
+    if not parent_path.is_absolute():
+        parent_path = path.resolve().parent / parent_path
+    parent = _load_yaml_with_inheritance(parent_path)
+    return _deep_merge(parent, data)
+
+
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in override.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged

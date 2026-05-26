@@ -1,0 +1,33 @@
+inherit_from: config_3models.yaml
+
+# Supplementary robustness run. It keeps the final phrase-centroid strategy
+# and adds the single-word anchor, which was useful for checking discrete
+# emotion specificity against shuffled-emotion controls.
+output_dir: "outputs/supplement_discrete_check"
+cache_path: "cache/embeddings_cache_3models.jsonl"
+top_k: 10
+bootstrap_iterations: 50
+exclude_query_terms_from_candidates: true
+
+emotion_representation_strategies:
+  - centroid_phrases
+  - single_word
+
+neutral_strategies:
+  - neutral_centroid
+
+control_conditions:
+  - emotion
+  - identity
+  - random
+  - shuffled_emotion
+
+models:
+  gemini:
+    enabled: true
+  qwen3_embedding_8b:
+    enabled: true
+  bielik_1_5b_v3:
+    enabled: true
+  mmlw_roberta_large:
+    enabled: true
