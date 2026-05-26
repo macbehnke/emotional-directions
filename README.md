@@ -158,8 +158,11 @@ Domyslnie uzywa jednej glownej strategii:
 centroid_phrases + neutral_centroid
 ```
 
-Projekt koncentruje sie na dyskretnych emocjach, takich jak `sadness`,
-`disgust`, `joy` i `anger`, a nie na wymiarach VAD jako glownym celu.
+Projekt koncentruje sie na emocjach i afektywnych etykietach takich jak
+`sadness`, `disgust`, `anger`, `fear`, `joy`, `amusement`, `excitement`,
+`love`, `positive` i `negative`, a nie na wymiarach VAD jako glownym celu.
+`positive` i `negative` sa szerokimi biegunami afektywnymi, wiec warto
+raportowac je osobno od bardziej dyskretnych emocji.
 Jesli dodasz zewnetrzne leksykony emocji, powinny miec etykiety dyskretnych
 emocji, np. `candidate, emotion_label, emotion_intensity`.
 

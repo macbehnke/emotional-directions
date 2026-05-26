@@ -152,6 +152,108 @@ emotions:
       centroid_words: ["愤怒", "生气", "恼火"]
       centroid_phrases: ["感到愤怒", "感到生气", "感到恼火"]
 
+  fear:
+    en:
+      single_word: "fear"
+      feeling_phrase: "feeling afraid"
+      centroid_words: ["fear", "anxiety", "terror"]
+      centroid_phrases: ["feeling afraid", "feeling anxious", "feeling terrified"]
+    pl:
+      single_word: "strach"
+      feeling_phrase: "czuję strach"
+      centroid_words: ["strach", "lęk", "przerażenie"]
+      centroid_phrases: ["czuję strach", "czuję lęk", "czuję przerażenie"]
+    zh:
+      single_word: "恐惧"
+      feeling_phrase: "感到害怕"
+      centroid_words: ["恐惧", "害怕", "惊恐"]
+      centroid_phrases: ["感到恐惧", "感到害怕", "感到惊恐"]
+
+  amusement:
+    en:
+      single_word: "amusement"
+      feeling_phrase: "feeling amused"
+      centroid_words: ["amusement", "humor", "playfulness"]
+      centroid_phrases: ["feeling amused", "feeling entertained", "feeling playful"]
+    pl:
+      single_word: "rozbawienie"
+      feeling_phrase: "czuję rozbawienie"
+      centroid_words: ["rozbawienie", "humor", "wesołość"]
+      centroid_phrases: ["czuję rozbawienie", "czuję wesołość", "czuję się rozbawiony"]
+    zh:
+      single_word: "愉悦"
+      feeling_phrase: "感到有趣"
+      centroid_words: ["愉悦", "幽默", "好玩"]
+      centroid_phrases: ["感到有趣", "感到好笑", "感到愉悦"]
+
+  excitement:
+    en:
+      single_word: "excitement"
+      feeling_phrase: "feeling excited"
+      centroid_words: ["excitement", "enthusiasm", "thrill"]
+      centroid_phrases: ["feeling excited", "feeling enthusiastic", "feeling thrilled"]
+    pl:
+      single_word: "ekscytacja"
+      feeling_phrase: "czuję ekscytację"
+      centroid_words: ["ekscytacja", "entuzjazm", "podekscytowanie"]
+      centroid_phrases: ["czuję ekscytację", "czuję entuzjazm", "czuję podekscytowanie"]
+    zh:
+      single_word: "兴奋"
+      feeling_phrase: "感到兴奋"
+      centroid_words: ["兴奋", "热情", "激动"]
+      centroid_phrases: ["感到兴奋", "感到热情", "感到激动"]
+
+  love:
+    en:
+      single_word: "love"
+      feeling_phrase: "feeling love"
+      centroid_words: ["love", "affection", "tenderness"]
+      centroid_phrases: ["feeling love", "feeling affection", "feeling tenderness"]
+    pl:
+      single_word: "miłość"
+      feeling_phrase: "czuję miłość"
+      centroid_words: ["miłość", "czułość", "przywiązanie"]
+      centroid_phrases: ["czuję miłość", "czuję czułość", "czuję przywiązanie"]
+    zh:
+      single_word: "爱"
+      feeling_phrase: "感到爱"
+      centroid_words: ["爱", "喜爱", "温情"]
+      centroid_phrases: ["感到爱", "感到喜爱", "感到温情"]
+
+  positive:
+    en:
+      single_word: "positive"
+      feeling_phrase: "feeling positive"
+      centroid_words: ["positive", "pleasant", "good"]
+      centroid_phrases: ["feeling positive", "feeling pleasant", "feeling good"]
+    pl:
+      single_word: "pozytywny"
+      feeling_phrase: "czuję się pozytywnie"
+      centroid_words: ["pozytywny", "przyjemny", "dobry"]
+      centroid_phrases: ["czuję się pozytywnie", "czuję przyjemność", "czuję się dobrze"]
+    zh:
+      single_word: "积极"
+      feeling_phrase: "感到积极"
+      centroid_words: ["积极", "愉快", "好"]
+      centroid_phrases: ["感到积极", "感到愉快", "感觉很好"]
+
+  negative:
+    en:
+      single_word: "negative"
+      feeling_phrase: "feeling negative"
+      centroid_words: ["negative", "unpleasant", "bad"]
+      centroid_phrases: ["feeling negative", "feeling unpleasant", "feeling bad"]
+    pl:
+      single_word: "negatywny"
+      feeling_phrase: "czuję się negatywnie"
+      centroid_words: ["negatywny", "nieprzyjemny", "zły"]
+      centroid_phrases: ["czuję się negatywnie", "czuję nieprzyjemność", "czuję się źle"]
+    zh:
+      single_word: "消极"
+      feeling_phrase: "感到消极"
+      centroid_words: ["消极", "不愉快", "不好"]
+      centroid_phrases: ["感到消极", "感到不愉快", "感觉不好"]
+
 neutral_terms:
   en: ["neutral", "ordinary", "plain", "average"]
   pl: ["neutralny", "zwykły", "przeciętny", "codzienny"]
