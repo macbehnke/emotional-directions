@@ -1,0 +1,16 @@
+{
+  "name": "presentation",
+  "version": "1.0.0",
+  "description": "PowerPoint deck builder for the emotional directions class presentation",
+  "main": "build_deck.js",
+  "scripts": {
+    "build": "node build_deck.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

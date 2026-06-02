@@ -1,0 +1,376 @@
+{
+  "model": [
+    {
+      "model": "bielik_1_5b_v3",
+      "pooling_strategy": "mean",
+      "mean_cosine_similarity_top_10": 0.8155,
+      "mean_projection_top_10": 0.0758,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 192,
+      "delta_emotion_minus_identity": 0.0538,
+      "delta_emotion_minus_random": 0.0513,
+      "delta_emotion_minus_shuffled": 0.0013,
+      "final_rank_score": 0.1822
+    },
+    {
+      "model": "gemini",
+      "pooling_strategy": null,
+      "mean_cosine_similarity_top_10": 0.5252,
+      "mean_projection_top_10": 0.0627,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 326,
+      "delta_emotion_minus_identity": 0.042,
+      "delta_emotion_minus_random": 0.0408,
+      "delta_emotion_minus_shuffled": 0.0221,
+      "final_rank_score": 0.1675
+    },
+    {
+      "model": "qwen3_embedding_8b",
+      "pooling_strategy": null,
+      "mean_cosine_similarity_top_10": 0.5123,
+      "mean_projection_top_10": 0.0663,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 281,
+      "delta_emotion_minus_identity": 0.0383,
+      "delta_emotion_minus_random": 0.0384,
+      "delta_emotion_minus_shuffled": 0.0151,
+      "final_rank_score": 0.1581
+    },
+    {
+      "model": "mmlw_roberta_large",
+      "pooling_strategy": null,
+      "mean_cosine_similarity_top_10": 0.9101,
+      "mean_projection_top_10": 0.019,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 200,
+      "delta_emotion_minus_identity": 0.0116,
+      "delta_emotion_minus_random": 0.0117,
+      "delta_emotion_minus_shuffled": 0.0034,
+      "final_rank_score": 0.0456
+    }
+  ],
+  "strategy": [
+    {
+      "emotion_strategy": "centroid_phrases",
+      "neutral_strategy": "neutral_centroid",
+      "mean_cosine_similarity_top_10": 0.6908,
+      "mean_projection_top_10": 0.0559,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 407,
+      "delta_emotion_minus_identity": 0.0364,
+      "delta_emotion_minus_random": 0.0355,
+      "delta_emotion_minus_shuffled": 0.0105,
+      "mean_direction_cosine": 0.937,
+      "mean_top_k_jaccard": 0.8586,
+      "final_rank_score": 0.2281
+    },
+    {
+      "emotion_strategy": "single_word",
+      "neutral_strategy": "neutral_centroid",
+      "mean_cosine_similarity_top_10": 0.6891,
+      "mean_projection_top_10": 0.0376,
+      "category_retention_at_10": 1.0,
+      "unique_candidates": 426,
+      "delta_emotion_minus_identity": 0.0253,
+      "delta_emotion_minus_random": 0.025,
+      "delta_emotion_minus_shuffled": 0.016,
+      "mean_direction_cosine": 0.8706,
+      "mean_top_k_jaccard": 0.8976,
+      "final_rank_score": 0.1924
+    }
+  ],
+  "emotion": [
+    {
+      "emotion": "disgust",
+      "delta_shuffled": 0.0269,
+      "delta_identity": 0.0454,
+      "projection": 0.0666
+    },
+    {
+      "emotion": "fear",
+      "delta_shuffled": 0.0154,
+      "delta_identity": 0.0369,
+      "projection": 0.0554
+    },
+    {
+      "emotion": "joy",
+      "delta_shuffled": 0.0127,
+      "delta_identity": 0.0349,
+      "projection": 0.0555
+    },
+    {
+      "emotion": "positive",
+      "delta_shuffled": 0.0116,
+      "delta_identity": 0.0303,
+      "projection": 0.0441
+    },
+    {
+      "emotion": "excitement",
+      "delta_shuffled": 0.0085,
+      "delta_identity": 0.0327,
+      "projection": 0.0507
+    },
+    {
+      "emotion": "negative",
+      "delta_shuffled": 0.0082,
+      "delta_identity": 0.0428,
+      "projection": 0.0605
+    },
+    {
+      "emotion": "love",
+      "delta_shuffled": 0.0066,
+      "delta_identity": 0.0304,
+      "projection": 0.049
+    },
+    {
+      "emotion": "amusement",
+      "delta_shuffled": 0.0063,
+      "delta_identity": 0.0367,
+      "projection": 0.0603
+    },
+    {
+      "emotion": "anger",
+      "delta_shuffled": 0.0051,
+      "delta_identity": 0.0365,
+      "projection": 0.0571
+    },
+    {
+      "emotion": "sadness",
+      "delta_shuffled": 0.0034,
+      "delta_identity": 0.0374,
+      "projection": 0.0601
+    }
+  ],
+  "model_language": [
+    {
+      "model": "gemini",
+      "language": "zh",
+      "delta_shuffled": 0.0251,
+      "delta_identity": 0.0472
+    },
+    {
+      "model": "gemini",
+      "language": "en",
+      "delta_shuffled": 0.0227,
+      "delta_identity": 0.0439
+    },
+    {
+      "model": "qwen3_embedding_8b",
+      "language": "en",
+      "delta_shuffled": 0.0208,
+      "delta_identity": 0.048
+    },
+    {
+      "model": "gemini",
+      "language": "pl",
+      "delta_shuffled": 0.0184,
+      "delta_identity": 0.0349
+    },
+    {
+      "model": "qwen3_embedding_8b",
+      "language": "zh",
+      "delta_shuffled": 0.0131,
+      "delta_identity": 0.0407
+    },
+    {
+      "model": "qwen3_embedding_8b",
+      "language": "pl",
+      "delta_shuffled": 0.0113,
+      "delta_identity": 0.0261
+    },
+    {
+      "model": "mmlw_roberta_large",
+      "language": "pl",
+      "delta_shuffled": 0.0064,
+      "delta_identity": 0.0146
+    },
+    {
+      "model": "mmlw_roberta_large",
+      "language": "en",
+      "delta_shuffled": 0.0037,
+      "delta_identity": 0.0201
+    },
+    {
+      "model": "bielik_1_5b_v3",
+      "language": "zh",
+      "delta_shuffled": 0.0026,
+      "delta_identity": 0.0684
+    },
+    {
+      "model": "bielik_1_5b_v3",
+      "language": "en",
+      "delta_shuffled": 0.0008,
+      "delta_identity": 0.0423
+    },
+    {
+      "model": "bielik_1_5b_v3",
+      "language": "pl",
+      "delta_shuffled": 0.0006,
+      "delta_identity": 0.0506
+    },
+    {
+      "model": "mmlw_roberta_large",
+      "language": "zh",
+      "delta_shuffled": 0.0,
+      "delta_identity": 0.0
+    }
+  ],
+  "examples": [
+    {
+      "category": "food",
+      "emotion": "disgust",
+      "language": "en",
+      "model": "gemini",
+      "items": [
+        "rotten food",
+        "spoiled milk",
+        "hospital food",
+        "comfort food",
+        "dirty plate"
+      ]
+    },
+    {
+      "category": "food",
+      "emotion": "disgust",
+      "language": "en",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "rotten food",
+        "greasy leftovers",
+        "hospital food",
+        "comfort food",
+        "restaurant meal"
+      ]
+    },
+    {
+      "category": "food",
+      "emotion": "disgust",
+      "language": "pl",
+      "model": "gemini",
+      "items": [
+        "zepsute jedzenie",
+        "ulubione jedzenie",
+        "szpitalne jedzenie",
+        "posiłek w restauracji",
+        "spalony obiad"
+      ]
+    },
+    {
+      "category": "food",
+      "emotion": "disgust",
+      "language": "pl",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "ulubione jedzenie",
+        "zepsute jedzenie",
+        "surowe mięso",
+        "szpitalne jedzenie",
+        "uliczna przekąska"
+      ]
+    },
+    {
+      "category": "person",
+      "emotion": "love",
+      "language": "en",
+      "model": "gemini",
+      "items": [
+        "friend",
+        "beloved grandmother",
+        "kind nurse",
+        "musician",
+        "trusted colleague"
+      ]
+    },
+    {
+      "category": "person",
+      "emotion": "love",
+      "language": "en",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "friend",
+        "partner",
+        "kind nurse",
+        "parent",
+        "beloved grandmother"
+      ]
+    },
+    {
+      "category": "person",
+      "emotion": "love",
+      "language": "pl",
+      "model": "gemini",
+      "items": [
+        "kochana babcia",
+        "przyjaciel",
+        "dziecko",
+        "lekarz",
+        "rodzic"
+      ]
+    },
+    {
+      "category": "person",
+      "emotion": "love",
+      "language": "pl",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "przyjaciel",
+        "nieznajomy",
+        "bohater",
+        "partner",
+        "gość"
+      ]
+    },
+    {
+      "category": "place",
+      "emotion": "fear",
+      "language": "en",
+      "model": "gemini",
+      "items": [
+        "dangerous street",
+        "park",
+        "emergency room",
+        "office",
+        "funeral home"
+      ]
+    },
+    {
+      "category": "place",
+      "emotion": "fear",
+      "language": "en",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "park",
+        "airport",
+        "abandoned building",
+        "dangerous street",
+        "cemetery"
+      ]
+    },
+    {
+      "category": "place",
+      "emotion": "fear",
+      "language": "pl",
+      "model": "gemini",
+      "items": [
+        "niebezpieczna ulica",
+        "cmentarz",
+        "plac zabaw",
+        "ciemna piwnica",
+        "szkoła"
+      ]
+    },
+    {
+      "category": "place",
+      "emotion": "fear",
+      "language": "pl",
+      "model": "qwen3_embedding_8b",
+      "items": [
+        "niebezpieczna ulica",
+        "muzeum",
+        "plac zabaw",
+        "kościół",
+        "sala ratunkowa"
+      ]
+    }
+  ]
+}

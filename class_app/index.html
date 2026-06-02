@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotional Directions Explorer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Embedding-space classroom demo</p>
+      <h1>Emotional Directions Explorer</h1>
+    </div>
+    <div class="formula" aria-label="formula">
+      <span>category</span>
+      <strong>+</strong>
+      <span>emotion centroid</span>
+      <strong>-</strong>
+      <span>neutral centroid</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="experiment controls">
+      <label>
+        Model
+        <select id="modelSelect"></select>
+      </label>
+      <label>
+        Language
+        <select id="languageSelect"></select>
+      </label>
+      <label>
+        Category
+        <select id="categorySelect"></select>
+      </label>
+      <label>
+        Emotion
+        <select id="emotionSelect"></select>
+      </label>
+    </section>
+
+    <section class="explainer">
+      <div>
+        <h2>What is being moved?</h2>
+        <p id="centroidText"></p>
+      </div>
+      <div class="mini-equation" id="miniEquation"></div>
+    </section>
+
+    <section class="comparison-panel">
+      <div class="section-title">
+        <h2>Side-by-side comparison</h2>
+        <p>Inspect whether outputs stay similar across languages or models</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="comparison views">
+        <button class="tab active" data-tab="languages" type="button">Languages: EN vs PL</button>
+        <button class="tab" data-tab="models" type="button">Models in one language</button>
+      </div>
+      <div id="robustConcepts" class="robust-concepts"></div>
+      <div id="comparisonTable" class="comparison-table"></div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

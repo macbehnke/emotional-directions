@@ -249,6 +249,31 @@ Analiza zapisuje dodatkowe pliki:
 - `final_strategy_report.csv` - zwiezle porownanie strategii, szczegolnie dla supplementary run,
 - `summary_control_deltas.csv` - roznice `emotion` wzgledem kontroli.
 
+## Materialy na prezentacje w klasie
+
+Gotowe materialy sa w:
+
+```text
+presentation/emotional_directions_class_presentation.pptx
+class_app/index.html
+```
+
+Uruchomienie lokalnej aplikacji:
+
+```bash
+cd class_app
+python -m http.server 8765 --bind 127.0.0.1
+```
+
+Nastepnie otworz:
+
+```text
+http://127.0.0.1:8765/index.html
+```
+
+Aplikacja jest statyczna i korzysta z `class_app/data.js`, wiec nie uruchamia
+modeli i nie wymaga tokenow API.
+
 ## Pliki wynikowe
 
 Eksperyment zapisuje:
