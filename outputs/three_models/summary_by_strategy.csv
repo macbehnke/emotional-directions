@@ -1,5 +1,5 @@
 condition,emotion_strategy,neutral_strategy,mean_cosine_similarity_top_10,category_retention_at_10,unique_candidates,mean_projection_top_10
-emotion,centroid_phrases,neutral_centroid,0.6958621993164221,1.0,397,0.05750936152044099
-identity,centroid_phrases,neutral_centroid,0.8109253316124281,1.0,283,0.01997849054037204
-random,centroid_phrases,neutral_centroid,0.5740840700268746,1.0,348,0.0208492756051345
-shuffled_emotion,centroid_phrases,neutral_centroid,0.6958621993164221,1.0,397,0.044355597381598756
+emotion,centroid_phrases,neutral_centroid,0.6196115101456642,1.0,415,0.06163336296354728
+identity,centroid_phrases,neutral_centroid,0.7409909667571386,1.0,298,0.02173232876223821
+random,centroid_phrases,neutral_centroid,0.5248702653010686,1.0,387,0.0225048884697724
+shuffled_emotion,centroid_phrases,neutral_centroid,0.6196115101456642,1.0,415,0.05063326423377728
