@@ -27,6 +27,8 @@ models:
     enabled: true
   qwen3_embedding_8b:
     enabled: true
+  arctic_embed_l_v2:
+    enabled: true
   bielik_1_5b_v3:
     enabled: true
   mmlw_roberta_large:

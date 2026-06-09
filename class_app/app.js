@@ -6,6 +6,7 @@ const labels = {
   zh: "Chinese",
   gemini: "Gemini",
   qwen3_embedding_8b: "Qwen3-Embedding-8B",
+  arctic_embed_l_v2: "Arctic Embed L v2",
   bielik_1_5b_v3: "Bielik",
   mmlw_roberta_large: "MMLW-RoBERTa",
 };
@@ -131,7 +132,7 @@ function renderComparison() {
     return;
   }
 
-  const models = ["gemini", "qwen3_embedding_8b", "bielik_1_5b_v3", "mmlw_roberta_large"];
+  const models = ["gemini", "qwen3_embedding_8b", "arctic_embed_l_v2", "bielik_1_5b_v3", "mmlw_roberta_large"];
   const rowsByModel = Object.fromEntries(models.map((modelName) => [
     modelName,
     candidateRows({ model: modelName, language, category, emotion }),

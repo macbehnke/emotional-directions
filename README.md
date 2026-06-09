@@ -33,6 +33,7 @@ Konfiguracja jest w `config.yaml`.
 - `gemini` - Google Gemini Embedding, domyslnie `models/gemini-embedding-001`, do 3072 wymiarow.
 - `qwen3_embedding_0_6b` - lekki Qwen przez Hugging Face / sentence-transformers, do 1024 wymiarow.
 - `qwen3_embedding_8b` - wiekszy Qwen do glownego porownania, `Qwen/Qwen3-Embedding-8B`, do 4096 wymiarow.
+- `arctic_embed_l_v2` - Snowflake Arctic Embed L v2.0 przez sentence-transformers, multilingual open-weights embedder.
 - `bielik_1_5b_v3` - Bielik przez hidden states i pooling. To wariant eksperymentalny, bo Bielik nie jest klasycznym modelem embeddingowym. Wynikow nie nalezy bezposrednio porownywac z wyspecjalizowanymi modelami embeddingowymi.
 - `mmlw_roberta_large` - `sdadas/mmlw-roberta-large`, polski model embeddingowy porownywalny z wyspecjalizowanymi encoderami.
 - `text_embedding_3_large` - placeholder pod opcjonalny model porownawczy.
@@ -143,13 +144,14 @@ python experiment.py --config config.yaml --top_k 10
 python analysis.py --results outputs/results_full.csv
 ```
 
-## Porownanie modeli: Bielik, Gemini, Qwen, MMLW-RoBERTa
+## Porownanie modeli: Bielik, Gemini, Qwen, Arctic, MMLW-RoBERTa
 
 Gotowa konfiguracja jest w `config_3models.yaml`. Wlaczone sa tylko:
 
 - `bielik_1_5b_v3`
 - `gemini`
 - `qwen3_embedding_8b`
+- `arctic_embed_l_v2`
 - `mmlw_roberta_large`
 
 Domyslnie uzywa jednej glownej strategii:
@@ -192,7 +194,7 @@ python analysis.py --results outputs/three_models/results_full.csv
 Mozesz tez wymusic modele z CLI:
 
 ```bash
-python experiment.py --config config_3models.yaml --models bielik_1_5b_v3,gemini,qwen3_embedding_8b,mmlw_roberta_large
+python experiment.py --config config_3models.yaml --models bielik_1_5b_v3,gemini,qwen3_embedding_8b,arctic_embed_l_v2,mmlw_roberta_large
 ```
 
 ## Final analysis run
@@ -203,7 +205,7 @@ Uzywa:
 - `centroid_phrases + neutral_centroid`,
 - warunkow kontrolnych `emotion`, `identity`, `random`, `shuffled_emotion`,
 - filtrowania kandydatow identycznych z kategoria albo seedami emocji,
-- modeli `gemini`, `qwen3_embedding_8b`, `bielik_1_5b_v3` i `mmlw_roberta_large`.
+- modeli `gemini`, `qwen3_embedding_8b`, `arctic_embed_l_v2`, `bielik_1_5b_v3` i `mmlw_roberta_large`.
 
 Uruchomienie na klastrze:
 
@@ -227,10 +229,10 @@ python experiment.py --config config_final.yaml --top_k 10
 python analysis.py --results outputs/final_run/results_full.csv
 ```
 
-Jesli chcesz ograniczyc finalny bieg do trzech modeli bez MMLW-RoBERTa:
+Jesli chcesz ograniczyc finalny bieg do dedykowanych embedderow plus Bielik:
 
 ```bash
-python experiment.py --config config_final.yaml --top_k 10 --models bielik_1_5b_v3,gemini,qwen3_embedding_8b
+python experiment.py --config config_final.yaml --top_k 10 --models bielik_1_5b_v3,gemini,qwen3_embedding_8b,arctic_embed_l_v2
 python analysis.py --results outputs/final_run/results_full.csv
 ```
 

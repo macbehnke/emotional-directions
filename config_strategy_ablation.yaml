@@ -42,6 +42,13 @@ models:
     embedding_dimension: 4096
     normalize: true
 
+  arctic_embed_l_v2:
+    enabled: true
+    backend: sentence-transformers
+    model_id: "Snowflake/snowflake-arctic-embed-l-v2.0"
+    embedding_dimension: null
+    normalize: true
+
   mmlw_roberta_large:
     enabled: true
     backend: sentence-transformers

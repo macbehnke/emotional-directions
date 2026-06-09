@@ -154,7 +154,7 @@ function slideDesign() {
   slide.background = { color: C.pale };
   addTitle(slide, "Experiment design", "Same categories, emotions, languages, and controls across models.");
   const cols = [
-    ["Models", ["Gemini", "Qwen3-Embedding-8B", "Bielik hidden states", "MMLW-RoBERTa"]],
+    ["Models", ["Gemini", "Qwen3-Embedding-8B", "Arctic Embed L v2", "Bielik hidden states", "MMLW-RoBERTa"]],
     ["Languages", ["English", "Polish", "Chinese"]],
     ["Categories", ["food", "person", "object", "place", "situation"]],
     ["Emotion labels", ["10 labels", "discrete + broad affective", "centroid phrases"]],
@@ -207,10 +207,10 @@ function slideModels() {
   addTitle(slide, "Model comparison", "Final score combines projection and control deltas.");
   const rows = data.model.sort((a, b) => b.final_rank_score - a.final_rank_score);
   const max = Math.max(...rows.map(r => r.final_rank_score));
-  const colors = { gemini: C.blue, qwen3_embedding_8b: C.green, bielik_1_5b_v3: C.gold, mmlw_roberta_large: C.rose };
-  rows.forEach((r, i) => bar(slide, r.model.replace("qwen3_embedding_8b", "Qwen3").replace("bielik_1_5b_v3", "Bielik").replace("mmlw_roberta_large", "MMLW"), r.final_rank_score, max, 0.9, 1.9 + i * 0.58, 6.2, colors[r.model] || C.green));
+  const colors = { gemini: C.blue, qwen3_embedding_8b: C.green, arctic_embed_l_v2: C.teal, bielik_1_5b_v3: C.gold, mmlw_roberta_large: C.rose };
+  rows.forEach((r, i) => bar(slide, r.model.replace("qwen3_embedding_8b", "Qwen3").replace("arctic_embed_l_v2", "Arctic").replace("bielik_1_5b_v3", "Bielik").replace("mmlw_roberta_large", "MMLW"), r.final_rank_score, max, 0.9, 1.9 + i * 0.58, 6.2, colors[r.model] || C.green));
   slide.addText("Takeaway", { x: 0.9, y: 4.7, w: 1.4, h: 0.25, fontSize: 16, bold: true, color: C.ink, margin: 0 });
-  slide.addText("Gemini and Qwen are the cleanest embedding-model comparison. Bielik is interesting as an exploratory hidden-state condition; MMLW-RoBERTa should not support cross-lingual claims here.", { x: 2.0, y: 4.68, w: 9.5, h: 0.48, fontSize: 13.5, color: C.muted, margin: 0, fit: "shrink" });
+  slide.addText("Gemini, Qwen, and Arctic are the cleanest embedding-model comparison. Bielik is interesting as an exploratory hidden-state condition; MMLW-RoBERTa should not support cross-lingual claims here.", { x: 2.0, y: 4.68, w: 9.5, h: 0.48, fontSize: 13.5, color: C.muted, margin: 0, fit: "shrink" });
   addFooter(slide);
 }
 

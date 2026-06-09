@@ -503,7 +503,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--models",
         default=None,
-        help="Opcjonalna lista modeli po przecinku, np. bielik_1_5b_v3,gemini,qwen3_embedding_0_6b",
+        help=(
+            "Opcjonalna lista modeli po przecinku, np. "
+            "bielik_1_5b_v3,gemini,qwen3_embedding_8b,arctic_embed_l_v2"
+        ),
     )
     parser.add_argument("--test", action="store_true", help="Maly test: 1 model, 1 jezyk, 2 kategorie, 2 emocje, top_k=5")
     parser.add_argument(
