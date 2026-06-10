@@ -15,8 +15,15 @@ Open:
 http://127.0.0.1:8765/index.html
 ```
 
-The app uses `data.js`, generated from `outputs/final_run/results_full.csv`
+The app uses `data.js`, generated from `outputs/three_models/results_full.csv`
 and the final summary reports. It does not call any model or API.
+
+Regenerate after a new result run:
+
+```bash
+python analysis.py --results outputs/three_models/results_full.csv
+python class_app/build_data.py --results outputs/three_models/results_full.csv
+```
 
 Main views:
 

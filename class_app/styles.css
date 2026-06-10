@@ -190,7 +190,7 @@ article {
 }
 
 .comparison-grid.models {
-  grid-template-columns: 64px repeat(4, minmax(210px, 1fr));
+  grid-template-columns: 64px repeat(5, minmax(180px, 1fr));
 }
 
 .comparison-cell {
