@@ -11,11 +11,18 @@ data/candidates/{language}/{category}.txt
 The current default is:
 
 ```yaml
+search_scope: "vocabulary"
 candidate_unit: "word"
 ```
 
-In this mode, each line is split into word-like candidates before ranking. For
-example, `hospital food` becomes two candidates: `hospital` and `food`.
+In this mode, the experiment ranks words from `data/vocabulary/{language}.txt`.
+If that file is missing, the code falls back to extracting individual words from
+the old candidate files, but that fallback should be treated only as a smoke
+test.
+
+The important point is that a nearest-neighbor query still needs a finite search
+space. The embedding API gives a vector for text; it does not expose an infinite
+index of all possible words.
 
 Some input lines are already single words, for example:
 
@@ -34,8 +41,8 @@ dangerous street
 being betrayed
 ```
 
-In `candidate_unit: "word"` mode, those phrases are not ranked as full phrases.
-Only the extracted words are embedded and ranked:
+If the fallback is used, phrases are not ranked as full phrases. Only extracted
+words are embedded and ranked:
 
 ```python
 embedder.embed("hospital", "en")

@@ -49,6 +49,7 @@ class ExperimentConfig:
     emotion_strategies: list[str]
     neutral_strategies: list[str]
     candidate_root: Path
+    vocabulary_root: Path
     search_scope: str
     candidate_unit: str
     top_k: int
@@ -99,6 +100,7 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
         )),
         neutral_strategies=list(data.get("neutral_strategies", NEUTRAL_STRATEGIES)),
         candidate_root=_resolve_path(base_dir, data.get("candidate_root", "data/candidates")),
+        vocabulary_root=_resolve_path(base_dir, data.get("vocabulary_root", "data/vocabulary")),
         search_scope=data.get("search_scope", "category"),
         candidate_unit=data.get("candidate_unit", "word"),
         top_k=int(data.get("top_k", 10)),
@@ -145,6 +147,7 @@ def make_test_config(config: ExperimentConfig, top_k: int = 5) -> ExperimentConf
         emotion_strategies=config.emotion_strategies,
         neutral_strategies=config.neutral_strategies,
         candidate_root=config.candidate_root,
+        vocabulary_root=config.vocabulary_root,
         search_scope="category",
         candidate_unit=config.candidate_unit,
         top_k=top_k,

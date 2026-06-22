@@ -253,6 +253,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
 
                 candidate_records = load_candidates(
                     config.candidate_root,
+                    config.vocabulary_root,
                     language,
                     category_id,
                     config.search_scope,
@@ -523,9 +524,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", action="store_true", help="Maly test: 1 model, 1 jezyk, 2 kategorie, 2 emocje, top_k=5")
     parser.add_argument(
         "--search_scope",
-        choices=["category", "language"],
+        choices=["category", "language", "vocabulary"],
         default=None,
-        help="category: kandydaci kategorii; language: caly slownik danego jezyka",
+        help=(
+            "category: kandydaci kategorii; language: wszystkie pliki kandydatow jezyka; "
+            "vocabulary: slowa z data/vocabulary/{language}.txt"
+        ),
     )
     parser.add_argument(
         "--candidate_unit",

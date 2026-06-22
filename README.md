@@ -21,10 +21,12 @@ z plikow:
 data/candidates/{language}/{category}.txt
 ```
 
-Domyslny tryb `candidate_unit: "word"` rozbija kazda linie na pojedyncze slowa,
-wiec `hospital food` staje sie kandydatami `hospital` i `food`. Starszy tryb
-`candidate_unit: "text"` traktuje cala linie jako jeden kandydat tekstowy.
-Szczegoly sa opisane w `TECHNICAL_NOTE.md`.
+Domyslny tryb `search_scope: "vocabulary"` szuka najblizszych slow w jawnym
+slowniku `data/vocabulary/{language}.txt`. Jesli pliku slownika nie ma, kod
+awaryjnie rozbija stare listy kandydatow na pojedyncze slowa, np.
+`hospital food` staje sie `hospital` i `food`. Starszy tryb
+`search_scope: "category"` lub `search_scope: "language"` moze nadal pracowac
+na listach kandydatow. Szczegoly sa opisane w `TECHNICAL_NOTE.md`.
 
 ## Strategie emocji
 

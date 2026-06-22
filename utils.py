@@ -42,6 +42,10 @@ def candidate_path(candidate_root: Path, language: str, category: str) -> Path:
     return candidate_root / language / f"{category}.txt"
 
 
+def vocabulary_path(vocabulary_root: Path, language: str) -> Path:
+    return vocabulary_root / f"{language}.txt"
+
+
 def candidate_records_from_lines(
     lines: list[str],
     candidate_category: str,
@@ -73,6 +77,7 @@ def candidate_records_from_lines(
 
 def load_candidates(
     candidate_root: Path,
+    vocabulary_root: Path,
     language: str,
     category: str,
     scope: str,
@@ -83,10 +88,25 @@ def load_candidates(
     candidate_unit="word" ranks individual words extracted from candidate
     lines. candidate_unit="text" ranks each full line, including phrases.
     """
-    if scope not in {"category", "language"}:
-        raise ValueError("search_scope musi byc 'category' albo 'language'.")
+    if scope not in {"category", "language", "vocabulary"}:
+        raise ValueError("search_scope musi byc 'category', 'language' albo 'vocabulary'.")
 
     records: list[dict[str, str]] = []
+    if scope == "vocabulary":
+        path = vocabulary_path(vocabulary_root, language)
+        if path.exists():
+            return candidate_records_from_lines(load_lines(path), "vocabulary", "word")
+        warnings.warn(
+            f"Brak slownika {path}; awaryjnie buduje slownik z data/candidates/{language}."
+        )
+        language_dir = candidate_root / language
+        if not language_dir.exists():
+            warnings.warn(f"Brak katalogu kandydatow: {language_dir}")
+            return []
+        for candidate_file in sorted(language_dir.glob("*.txt")):
+            records.extend(candidate_records_from_lines(load_lines(candidate_file), "vocabulary", "word"))
+        return records
+
     if scope == "category":
         path = candidate_path(candidate_root, language, category)
         return candidate_records_from_lines(load_lines(path), category, candidate_unit)

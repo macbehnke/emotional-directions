@@ -1,6 +1,7 @@
 top_k: 10
 languages: ["en", "pl", "zh"]
 candidate_root: "data/candidates"
+vocabulary_root: "data/vocabulary"
 cache_path: "cache/embeddings_cache.jsonl"
 output_dir: "outputs"
 random_seed: 42
@@ -8,7 +9,7 @@ bootstrap_iterations: 100
 
 # category: nearest neighbors only inside language/category file.
 # language: nearest neighbors inside all category files for this language.
-search_scope: "category"
+search_scope: "vocabulary"
 candidate_unit: "word"
 exclude_query_terms_from_candidates: true
 
