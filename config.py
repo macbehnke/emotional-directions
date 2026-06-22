@@ -50,6 +50,7 @@ class ExperimentConfig:
     neutral_strategies: list[str]
     candidate_root: Path
     search_scope: str
+    candidate_unit: str
     top_k: int
     cache_path: Path
     output_dir: Path
@@ -99,6 +100,7 @@ def load_config(path: str | Path = DEFAULT_CONFIG_PATH) -> ExperimentConfig:
         neutral_strategies=list(data.get("neutral_strategies", NEUTRAL_STRATEGIES)),
         candidate_root=_resolve_path(base_dir, data.get("candidate_root", "data/candidates")),
         search_scope=data.get("search_scope", "category"),
+        candidate_unit=data.get("candidate_unit", "word"),
         top_k=int(data.get("top_k", 10)),
         cache_path=_resolve_path(base_dir, data.get("cache_path", "cache/embeddings_cache.jsonl")),
         output_dir=_resolve_path(base_dir, data.get("output_dir", "outputs")),
@@ -144,6 +146,7 @@ def make_test_config(config: ExperimentConfig, top_k: int = 5) -> ExperimentConf
         neutral_strategies=config.neutral_strategies,
         candidate_root=config.candidate_root,
         search_scope="category",
+        candidate_unit=config.candidate_unit,
         top_k=top_k,
         cache_path=config.cache_path,
         output_dir=config.output_dir,

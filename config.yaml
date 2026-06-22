@@ -9,6 +9,7 @@ bootstrap_iterations: 100
 # category: nearest neighbors only inside language/category file.
 # language: nearest neighbors inside all category files for this language.
 search_scope: "category"
+candidate_unit: "word"
 exclude_query_terms_from_candidates: true
 
 control_conditions:

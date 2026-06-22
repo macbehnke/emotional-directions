@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import warnings
+import re
 from pathlib import Path
 from typing import Iterable
 
@@ -41,11 +42,46 @@ def candidate_path(candidate_root: Path, language: str, category: str) -> Path:
     return candidate_root / language / f"{category}.txt"
 
 
-def load_candidates(candidate_root: Path, language: str, category: str, scope: str) -> list[dict[str, str]]:
-    """Load rankable candidate text strings.
+def candidate_records_from_lines(
+    lines: list[str],
+    candidate_category: str,
+    candidate_unit: str,
+) -> list[dict[str, str]]:
+    if candidate_unit not in {"word", "text"}:
+        raise ValueError("candidate_unit musi byc 'word' albo 'text'.")
 
-    Each non-empty line is one candidate unit. It may be a word or a phrase; the
-    embedding backend embeds that whole string as one input.
+    records: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for line in lines:
+        if candidate_unit == "text":
+            units = [line]
+        else:
+            units = re.findall(r"\b\w+\b", line.lower(), flags=re.UNICODE)
+
+        for unit in units:
+            normalized = unit.strip().lower()
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            records.append({
+                "candidate": normalized,
+                "candidate_category": candidate_category,
+                "candidate_source": line,
+            })
+    return records
+
+
+def load_candidates(
+    candidate_root: Path,
+    language: str,
+    category: str,
+    scope: str,
+    candidate_unit: str = "word",
+) -> list[dict[str, str]]:
+    """Load rankable candidate units.
+
+    candidate_unit="word" ranks individual words extracted from candidate
+    lines. candidate_unit="text" ranks each full line, including phrases.
     """
     if scope not in {"category", "language"}:
         raise ValueError("search_scope musi byc 'category' albo 'language'.")
@@ -53,10 +89,7 @@ def load_candidates(candidate_root: Path, language: str, category: str, scope: s
     records: list[dict[str, str]] = []
     if scope == "category":
         path = candidate_path(candidate_root, language, category)
-        return [
-            {"candidate": item, "candidate_category": category}
-            for item in load_lines(path)
-        ]
+        return candidate_records_from_lines(load_lines(path), category, candidate_unit)
 
     language_dir = candidate_root / language
     if not language_dir.exists():
@@ -64,8 +97,7 @@ def load_candidates(candidate_root: Path, language: str, category: str, scope: s
         return []
     for path in sorted(language_dir.glob("*.txt")):
         candidate_category = path.stem
-        for item in load_lines(path):
-            records.append({"candidate": item, "candidate_category": candidate_category})
+        records.extend(candidate_records_from_lines(load_lines(path), candidate_category, candidate_unit))
     return records
 
 

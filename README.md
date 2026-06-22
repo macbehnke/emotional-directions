@@ -9,23 +9,22 @@ category + emotion - neutral
 daja interpretowalne przesuniecia semantyczne, np.:
 
 ```text
-food + disgust - neutral -> worms / mold / rotten food
+food + disgust - neutral -> worms / mold / spoiled
 ```
 
 ## Co jest rankingowane
 
-Model nie generuje nowych slow ani nie zwraca najblizszych tokenow ze slownika.
-Ranking odbywa sie na gotowej liscie kandydatow z plikow:
+Model nie generuje nowych slow. Ranking odbywa sie na gotowej liscie kandydatow
+z plikow:
 
 ```text
 data/candidates/{language}/{category}.txt
 ```
 
-Kazda linia jest jednym kandydatem tekstowym. Kandydat moze byc pojedynczym
-slowem (`bread`) albo krotka fraza (`hospital food`). Backend embeddingowy
-dostaje caly tekst kandydata, np. `embedder.embed("hospital food", "en")`, i
-zwraca jeden wektor dla calej frazy. Szczegoly sa opisane w
-`TECHNICAL_NOTE.md`.
+Domyslny tryb `candidate_unit: "word"` rozbija kazda linie na pojedyncze slowa,
+wiec `hospital food` staje sie kandydatami `hospital` i `food`. Starszy tryb
+`candidate_unit: "text"` traktuje cala linie jako jeden kandydat tekstowy.
+Szczegoly sa opisane w `TECHNICAL_NOTE.md`.
 
 ## Strategie emocji
 

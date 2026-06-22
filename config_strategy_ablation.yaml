@@ -4,6 +4,7 @@ candidate_root: "data/candidates"
 cache_path: "cache/embeddings_cache_3models.jsonl"
 output_dir: "outputs/strategy_ablation"
 search_scope: "category"
+candidate_unit: "word"
 exclude_query_terms_from_candidates: true
 random_seed: 42
 bootstrap_iterations: 30

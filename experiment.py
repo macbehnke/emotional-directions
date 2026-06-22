@@ -68,12 +68,11 @@ def rank_candidate_texts(
     category_vector: np.ndarray,
     emotion_direction: np.ndarray,
 ) -> list[dict[str, Any]]:
-    """Rank pre-defined candidate strings by similarity to the query vector.
+    """Rank candidate units by similarity to the query vector.
 
-    The candidates are text units from data/candidates, not vocabulary tokens.
-    A candidate can therefore be a single word ("bread") or a short phrase
-    ("hospital food"). The embedding backend converts the whole string into one
-    vector before ranking.
+    In the default word mode, multi-word candidate lines such as "hospital food"
+    are split before this function is called, so the ranked candidates are
+    individual words such as "hospital" and "food".
     """
     if not candidate_records:
         raise ValueError("Lista kandydatow jest pusta.")
@@ -257,6 +256,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
                     language,
                     category_id,
                     config.search_scope,
+                    config.candidate_unit,
                 )
                 if not candidate_records:
                     warnings.warn(f"Pomijam pusta liste kandydatow: {language}/{category_id}")
@@ -386,6 +386,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
                                         "neutral_terms": "; ".join(selected_neutral),
                                         "candidate": candidate,
                                         "candidate_category": row["candidate_category"],
+                                        "candidate_source": row.get("candidate_source", candidate),
                                         "rank": row["rank"],
                                         "cosine_similarity": row["cosine_similarity"],
                                         "projection_on_emotion_direction": row["projection_on_emotion_direction"],
@@ -526,6 +527,12 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="category: kandydaci kategorii; language: caly slownik danego jezyka",
     )
+    parser.add_argument(
+        "--candidate_unit",
+        choices=["word", "text"],
+        default=None,
+        help="word: pojedyncze slowa z list kandydatow; text: cale linie, takze frazy",
+    )
     return parser.parse_args()
 
 
@@ -536,6 +543,8 @@ def main() -> None:
         config = config.__class__(**{**config.__dict__, "top_k": args.top_k})
     if args.search_scope is not None:
         config = config.__class__(**{**config.__dict__, "search_scope": args.search_scope})
+    if args.candidate_unit is not None:
+        config = config.__class__(**{**config.__dict__, "candidate_unit": args.candidate_unit})
     if args.models:
         selected = {name.strip() for name in args.models.split(",") if name.strip()}
         models = {
