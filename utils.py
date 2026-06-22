@@ -42,6 +42,11 @@ def candidate_path(candidate_root: Path, language: str, category: str) -> Path:
 
 
 def load_candidates(candidate_root: Path, language: str, category: str, scope: str) -> list[dict[str, str]]:
+    """Load rankable candidate text strings.
+
+    Each non-empty line is one candidate unit. It may be a word or a phrase; the
+    embedding backend embeds that whole string as one input.
+    """
     if scope not in {"category", "language"}:
         raise ValueError("search_scope musi byc 'category' albo 'language'.")
 

@@ -59,7 +59,7 @@ def get_neutral_vector(
     return mean_vector([embedder.embed(term, language) for term in selected]), selected
 
 
-def nearest_neighbors(
+def rank_candidate_texts(
     query_vector: np.ndarray,
     candidate_records: list[dict[str, str]],
     embedder,
@@ -68,6 +68,13 @@ def nearest_neighbors(
     category_vector: np.ndarray,
     emotion_direction: np.ndarray,
 ) -> list[dict[str, Any]]:
+    """Rank pre-defined candidate strings by similarity to the query vector.
+
+    The candidates are text units from data/candidates, not vocabulary tokens.
+    A candidate can therefore be a single word ("bread") or a short phrase
+    ("hospital food"). The embedding backend converts the whole string into one
+    vector before ranking.
+    """
     if not candidate_records:
         raise ValueError("Lista kandydatow jest pusta.")
     vectors = [embedder.embed(record["candidate"], language) for record in candidate_records]
@@ -92,6 +99,10 @@ def nearest_neighbors(
     for rank, row in enumerate(rows[:top_k], start=1):
         row["rank"] = rank
     return rows[:top_k]
+
+
+# Backwards-compatible name used by older notebooks/scripts.
+nearest_neighbors = rank_candidate_texts
 
 
 def filter_candidate_records(
@@ -190,7 +201,7 @@ def bootstrap_stability(
         boot_direction = boot_emotion - boot_neutral
         boot_query = category_vector + boot_direction
         boot_query = boot_query / np.linalg.norm(boot_query)
-        boot_rows = nearest_neighbors(
+        boot_rows = rank_candidate_texts(
             boot_query,
             candidate_records,
             embedder,
@@ -323,7 +334,7 @@ def run_experiment(config: ExperimentConfig) -> tuple[list[dict[str, Any]], list
                                     random_direction,
                                 )
 
-                                top_rows = nearest_neighbors(
+                                top_rows = rank_candidate_texts(
                                     query_vector,
                                     candidate_records_for_query,
                                     embedder,
