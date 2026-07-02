@@ -1,0 +1,10 @@
+inherit_from: config_final.yaml
+
+# English-only rerun with a real word vocabulary search space.
+# Build data/vocabulary/en.txt first:
+# python scripts/build_vocabulary.py --language en --limit 50000 --out data/vocabulary/en.txt
+languages: ["en"]
+search_scope: "vocabulary"
+candidate_unit: "word"
+output_dir: "outputs/final_run_en_vocabulary"
+cache_path: "cache/embeddings_cache_en_vocabulary.jsonl"

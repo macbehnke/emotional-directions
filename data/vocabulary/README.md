@@ -16,7 +16,16 @@ words from `data/candidates/{language}/*.txt`. That fallback is only for smoke
 tests and backwards compatibility. For the cleaner experiment, replace it with a
 large external word list.
 
-Recommended sources:
+Recommended source for English:
+
+```bash
+python scripts/build_vocabulary.py --language en --limit 50000 --out data/vocabulary/en.txt
+```
+
+This uses the `wordfreq` package to create a one-word-per-line vocabulary of
+common English words, filtered to alphabetic words only.
+
+Other possible sources:
 
 - a frequency list such as wordfreq/wordfreq-top words,
 - a corpus-derived vocabulary from the language being tested,
