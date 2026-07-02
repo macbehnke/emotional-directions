@@ -1,0 +1,5 @@
+model,pooling_strategy,condition,mean_cosine_similarity_top_10,category_retention_at_10,unique_candidates,mean_projection_top_10
+arctic_embed_l_v2,,emotion,0.46642283034324644,0.0,117,0.23029981290688736
+arctic_embed_l_v2,,identity,0.6602757239341736,0.0,50,0.006268464040011168
+arctic_embed_l_v2,,random,0.47093327271938323,0.0,102,-0.0033150161346420623
+arctic_embed_l_v2,,shuffled_emotion,0.46642283034324644,0.0,117,0.19120433333283288
