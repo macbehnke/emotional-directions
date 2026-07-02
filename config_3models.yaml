@@ -50,6 +50,7 @@ models:
     model_id: "Snowflake/snowflake-arctic-embed-l-v2.0"
     embedding_dimension: null
     normalize: true
+    device: auto
 
   bielik_1_5b_v3:
     enabled: true
