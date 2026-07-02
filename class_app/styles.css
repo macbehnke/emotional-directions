@@ -186,11 +186,11 @@ article {
 }
 
 .comparison-grid.languages {
-  grid-template-columns: 64px repeat(2, minmax(280px, 1fr));
+  grid-template-columns: 64px repeat(var(--comparison-columns, 1), minmax(280px, 1fr));
 }
 
 .comparison-grid.models {
-  grid-template-columns: 64px repeat(5, minmax(180px, 1fr));
+  grid-template-columns: 64px repeat(var(--comparison-columns, 1), minmax(180px, 1fr));
 }
 
 .comparison-cell {
