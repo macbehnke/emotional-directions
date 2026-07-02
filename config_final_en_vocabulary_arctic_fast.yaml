@@ -1,0 +1,20 @@
+inherit_from: config_final_en_vocabulary.yaml
+
+# Fast vocabulary run for checking real word-neighbor results.
+# Bootstrap over a 50k vocabulary is CPU-heavy, so this keeps only the main rankings.
+bootstrap_iterations: 0
+output_dir: "outputs/final_run_en_vocabulary_arctic_fast"
+cache_path: "cache/embeddings_cache_en_vocabulary_arctic_fast.jsonl"
+
+models:
+  gemini:
+    enabled: false
+  qwen3_embedding_8b:
+    enabled: false
+  arctic_embed_l_v2:
+    enabled: true
+    device: auto
+  bielik_1_5b_v3:
+    enabled: false
+  mmlw_roberta_large:
+    enabled: false
